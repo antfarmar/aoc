@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <numeric>
@@ -31,21 +32,18 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 // checksum = (#letters==2) x (#letters==3)
 // count box IDs with exactly 2 or 3 of any letter
 int part1(const box_ids& ids) {
-    int dubs{0}, trip{0};
-    for (const box_id& id : ids) {
-        int cnt[26]{0};
-        std::for_each(id.begin(), id.end(),
-                      [&](const char& c) { ++cnt[c - 'a']; });
-        dubs += std::any_of(std::begin(cnt), std::end(cnt),
-                            [](int n) { return n == 2; })
-                    ? 1
-                    : 0;
-        trip += std::any_of(std::begin(cnt), std::end(cnt),
-                            [](int n) { return n == 3; })
-                    ? 1
-                    : 0;
-    }
-    return dubs * trip;
+    auto has_n_of_any_char{[&](const auto& s, const auto& n) {
+        for (auto c = 'a'; c <= 'z'; c++)
+            if (n == std::count(s.cbegin(), s.cend(), c))
+                return true;
+        return false;
+    }};
+    auto ids_with_exactly{[&](const int& n) {
+        return std::count_if(ids.begin(), ids.end(), [&](auto& id) {
+            return has_n_of_any_char(id, n);
+        });
+    }};
+    return ids_with_exactly(2) * ids_with_exactly(3);
 }
 // int part1(box_ids& ids) {
 //     int dubs{0}, trip{0};
