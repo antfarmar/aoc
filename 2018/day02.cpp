@@ -33,6 +33,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 // count box IDs with exactly 2 or 3 of any letter
 int part1(const box_ids& ids) {
     const box_id alpha{"qwertyuiopasdfghjklzxcvbnm"};
+    const auto letter_counts = {2, 3};
     auto has_n_of_any_char{[&](const auto& s, const auto& n) {
         return any_of(alpha.cbegin(), alpha.cend(), [&](const char& c) {
             return (n == std::count(s.cbegin(), s.cend(), c));
@@ -43,7 +44,14 @@ int part1(const box_ids& ids) {
             return has_n_of_any_char(id, n);
         });
     }};
-    return ids_with_exactly(2) * ids_with_exactly(3);
+    auto compute_checksum{[&](const auto counts) {
+        return std::accumulate(counts.begin(), counts.end(), 1,
+                               [&](int prod, const int cnt) {
+                                   return prod * ids_with_exactly(cnt);
+                               });
+    }};
+    return compute_checksum(letter_counts);
+    // return ids_with_exactly(2) * ids_with_exactly(3);
 }
 // int part1(box_ids& ids) {
 //     int dubs{0}, trip{0};
