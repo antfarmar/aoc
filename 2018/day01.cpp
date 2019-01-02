@@ -14,9 +14,10 @@
 typedef std::vector<int> frequencies;
 typedef std::pair<int, int> solutions;
 
-// print a vector of ints (frequencies)
-std::ostream& operator<<(std::ostream& os, const frequencies& f) {
-    std::copy(f.cbegin(), f.cend(), std::ostream_iterator<int>(os, " "));
+// print a vector of type T
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
+    std::copy(v.cbegin(), v.cend(), std::ostream_iterator<T>(os, " "));
     return os;
 }
 
