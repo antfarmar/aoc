@@ -32,11 +32,11 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 // checksum = (#letters==2) x (#letters==3)
 // count box IDs with exactly 2 or 3 of any letter
 int part1(const box_ids& ids) {
+    const box_id alpha{"qwertyuiopasdfghjklzxcvbnm"};
     auto has_n_of_any_char{[&](const auto& s, const auto& n) {
-        for (auto c = 'a'; c <= 'z'; c++)
-            if (n == std::count(s.cbegin(), s.cend(), c))
-                return true;
-        return false;
+        return any_of(alpha.cbegin(), alpha.cend(), [&](const char& c) {
+            return (n == std::count(s.cbegin(), s.cend(), c));
+        });
     }};
     auto ids_with_exactly{[&](const int& n) {
         return std::count_if(ids.begin(), ids.end(), [&](auto& id) {
