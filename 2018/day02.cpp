@@ -39,7 +39,7 @@ int part1(const box_ids& ids) {
         });
     }};
     auto ids_with_exactly{[&](const int& n) {
-        return std::count_if(ids.begin(), ids.end(), [&](auto& id) {
+        return std::count_if(ids.cbegin(), ids.cend(), [&](const auto& id) {
             return has_n_of_any_char(id, n);
         });
     }};
