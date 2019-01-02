@@ -3,19 +3,38 @@
 // https://adventofcode.com/2018/day/2
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <iterator>
 #include <numeric>
 #include <sstream>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
-// Count box id's with 2 and 3 of any letter.
-int part1(std::vector<std::string>& data) {
+// type definitions for convenience and readability
+typedef std::string box_id;
+typedef std::vector<box_id> box_ids;
+typedef std::variant<int, box_id> result;
+typedef std::pair<int, box_id> solutions;
+
+// print a vector of type T
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
+    std::copy(v.cbegin(), v.cend(), std::ostream_iterator<T>(os, " "));
+    return os;
+}
+
+// part 1
+// what is the checksum for your list of box IDs?
+//
+// checksum = (#letters==2) x (#letters==3)
+// count box IDs with exactly 2 or 3 of any letter
+int part1(box_ids& ids) {
     int dubs{0}, trip{0};
-    for (std::string& line : data) {
+    for (box_id& id : ids) {
         int cnt[26]{0};
-        std::for_each(line.begin(), line.end(),
+        std::for_each(id.begin(), id.end(),
                       [&cnt](char& c) { ++cnt[c - 'a']; });
         dubs += std::any_of(std::begin(cnt), std::end(cnt),
                             [](int n) { return n == 2; })
@@ -31,9 +50,9 @@ int part1(std::vector<std::string>& data) {
 
 // Find the 2 box id's that differ by 1 character.
 // Compare every id pair: O(n^2)
-std::string part21(std::vector<std::string>& data) {
-    for (auto line1 = data.begin(); line1 < data.end() - 1; ++line1) {
-        for (auto line2 = line1 + 1; line2 < data.end(); ++line2) {
+box_id part21(box_ids& ids) {
+    for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
+        for (auto line2 = line1 + 1; line2 < ids.end(); ++line2) {
             if ([&line1, &line2](int diff) {
                     for (size_t i = 0; i < line1->length(); ++i)
                         if (line1->at(i) != line2->at(i) && ++diff > 1)
@@ -48,9 +67,9 @@ std::string part21(std::vector<std::string>& data) {
 
 // Find the 2 box id's that differ by 1 character.
 // Sort id's and hope they are adjacent: O(n) + O(n log n)
-std::string part22(std::vector<std::string>& data) {
-    std::sort(data.begin(), data.end());
-    for (auto line1 = data.begin(); line1 < data.end() - 1; ++line1) {
+box_id part22(box_ids& ids) {
+    std::sort(ids.begin(), ids.end());
+    for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
         if ([&line1](int diff) {
                 auto line2 = line1 + 1;
                 for (size_t i = 0; i < line1->length(); ++i)
@@ -66,11 +85,11 @@ std::string part22(std::vector<std::string>& data) {
 // Find the 2 box id's that differ by 1 character.
 // Hash every box id substring and wait for a match.
 // O(n*m) where m = string length of the ids, space complexity = O(n)
-std::string part23(std::vector<std::string>& data) {
-    for (size_t i = 0; i < data.size(); i++) {
-        std::unordered_set<std::string> set;
-        for (auto& line : data) {
-            std::string sub = line.substr(0, i) + line.substr(i + 1);
+box_id part23(box_ids& ids) {
+    for (size_t i = 0; i < ids.size(); i++) {
+        std::unordered_set<box_id> set;
+        for (auto& id : ids) {
+            box_id sub = id.substr(0, i) + id.substr(i + 1);
             if (!set.insert(sub).second)
                 return sub;
         }
@@ -78,11 +97,41 @@ std::string part23(std::vector<std::string>& data) {
     return "No solution.";
 }
 
-// Parse the box id's and solve.
+// return the solution pair to main
+solutions solve(box_ids& ids) {
+    return {part1(ids), part23(ids)};
+}
+
+// test the examples, parse the input data, then solve
 int main() {
-    std::vector<std::string> data{std::istream_iterator<std::string>{std::cin},
-                                  {}};
-    std::cout << "Part 1: Count = " << part1(data) << std::endl;  // 6916
-    std::cout << "Part 2: Match = " << part23(data)
-              << std::endl;  // oeylbtcxjqnzhgyylfapviusr
+    // housekeeping: speed up io (gotta go fast)
+    std::ios_base::sync_with_stdio(0);  // unsync c++ streams (from c stdio)
+    std::cin.tie(0);                    // unsync cin (from cout)
+
+    // run some tests
+    // std::cerr << "Testing the examples...\n";
+    // test_part(1), test_part(2);
+
+    // parse the real input data
+    std::cerr << "Parsing the input...\n";
+    box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
+
+    // time the solver
+    std::cerr << "Solving the challenge...\n\n";
+    auto start_time{std::chrono::high_resolution_clock::now()};
+    auto [part1, part2] = solve(ids);
+    auto end_time{std::chrono::high_resolution_clock::now()};
+
+    // convert duration timescale from nanoseconds to milliseconds
+    auto ms_count{std::chrono::duration_cast<std::chrono::milliseconds>(
+                      end_time - start_time)
+                      .count()};
+
+    // output the runtime
+    std::cerr << "After " << ms_count << "ms, we get..." << std::endl;
+
+    // output the solutions
+    std::cout << "\n--- Solutions ---\n";
+    std::cout << "Part 1: " << part1 << std::endl;  // 6916
+    std::cout << "Part 2: " << part2 << std::endl;  // oeylbtcxjqnzhgyylfapviusr
 }
