@@ -52,7 +52,8 @@ solutions solve(frequencies& freqs) {
 }
 
 // test suite of given examples
-void test(int (*partf)(const frequencies&), bool verbose = true) {
+void test_part(int part, bool verbose = true) {
+    auto partf{(part == 1) ? part1 : part2};
     typedef std::pair<frequencies, int> test_case;
     typedef std::vector<test_case> test_suite;
     const test_suite part1_examples{{{+1, -2, +3, +1}, 3},
@@ -93,7 +94,8 @@ int main() {
     frequencies freqs{std::istream_iterator<int>{std::cin}, {}};
 
     // run some tests
-    test(part1), test(part2);
+    // test(part1), test(part2);
+    test_part(1), test_part(2);
 
     // time the solver
     auto start_time{std::chrono::high_resolution_clock::now()};
