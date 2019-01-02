@@ -128,9 +128,10 @@ solutions solve(box_ids& ids) {
 }
 
 // test suite of given examples
+template <typename T, typename U>
 void test_part(int part, bool verbose = true) {
     auto partf{(part == 1) ? part1 : part1};
-    typedef std::pair<box_ids, int> test_case;
+    typedef std::pair<T, U> test_case;
     typedef std::vector<test_case> test_suite;
     const test_suite part1_examples{
         {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
@@ -162,7 +163,7 @@ int main() {
 
     // run some tests
     std::cerr << "Testing the examples...\n";
-    test_part(1);
+    test_part<box_ids, int>(1);
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";
