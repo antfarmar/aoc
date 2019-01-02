@@ -1,8 +1,8 @@
 // Advent of Code 2018
 // Day 1: Chronal Calibration
 // https://adventofcode.com/2018/day/1
+
 #include <algorithm>
-#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <iterator>
@@ -35,7 +35,7 @@ int part1(const frequencies& freqs) {
 // cycle through the partial sum frequencies until we get a recurrence
 int part2(const frequencies& freqs) {
     int idx{0}, sum{0};
-    std::unordered_set<int> seen{0};
+    std::unordered_set<int> seen{sum};  // first sum is 0
 
     auto cycle{[&](auto& v) { return v[idx++ % v.size()]; }};
     auto partial_sums{[&](auto f) { return sum += f; }};
@@ -52,7 +52,7 @@ solutions solve(frequencies& freqs) {
 }
 
 // test suite of given examples
-void test_part(int part, bool verbose = true) {
+void test_part(int part, bool verbose = 1) {
     auto partf{(part == 1) ? part1 : part2};
     typedef std::pair<frequencies, int> test_case;
     typedef std::vector<test_case> test_suite;
@@ -67,51 +67,53 @@ void test_part(int part, bool verbose = true) {
                                     {{+7, +7, -2, -7, -4}, 14}};
     auto report{[&](const auto& tcase, const auto& got) {
         const auto& [input, output]{tcase};
+        std::cerr << "Part " << part << std::endl;
         std::cerr << "For: " << input << std::endl;
         std::cerr << "Exp: " << output << std::endl;
         std::cerr << "Got: " << got << std::endl << std::endl;
     }};
     auto run_test{[&](const auto& tcase) {
-        const auto& [input, output] = tcase;
+        const auto& [input, output]{tcase};
         auto got = partf(input);
+        if (got != output)
+            report(tcase, got), abort();
         if (verbose)
             report(tcase, got);
-        assert(got == output);
     }};
     auto& examples{(partf == part1) ? part1_examples : part2_examples};
-    if (verbose)
-        std::cerr << "Testing part " << (partf != part1) + 1 << std::endl;
     for_each(examples.cbegin(), examples.cend(), run_test);
 }
 
-// parse the frequency data and solve
+// test the examples, parse the input data, then solve
 int main() {
-    // speed up io (gotta go fast)
+    // housekeeping: speed up io (gotta go fast)
     std::ios_base::sync_with_stdio(0);  // unsync c++ streams (from c stdio)
     std::cin.tie(0);                    // unsync cin (from cout)
 
-    // parse the data
-    frequencies freqs{std::istream_iterator<int>{std::cin}, {}};
-
     // run some tests
-    // test(part1), test(part2);
+    std::cerr << "Testing the examples...\n";
     test_part(1), test_part(2);
 
+    // parse the real input data
+    std::cerr << "Parsing the input...\n";
+    frequencies freqs{std::istream_iterator<int>{std::cin}, {}};
+
     // time the solver
+    std::cerr << "Solving the challenge...\n\n";
     auto start_time{std::chrono::high_resolution_clock::now()};
     auto [part1, part2] = solve(freqs);
     auto end_time{std::chrono::high_resolution_clock::now()};
 
-    // convert time to milliseconds
+    // convert duration timescale from nanoseconds to milliseconds
     auto ms_count{std::chrono::duration_cast<std::chrono::milliseconds>(
                       end_time - start_time)
                       .count()};
 
+    // output the runtime
+    std::cerr << "After " << ms_count << "ms, we get..." << std::endl;
+
     // output the solutions
-    std::cout << "--- Solutions ---" << std::endl;
+    std::cout << "\n--- Solutions ---\n";
     std::cout << "Part 1: " << part1 << std::endl;  // 520
     std::cout << "Part 2: " << part2 << std::endl;  // 394
-
-    // output the runtime
-    std::cerr << "Runtime: " << ms_count << "ms" << std::endl;
 }
