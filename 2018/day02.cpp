@@ -29,30 +29,32 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 // part 1
 // what is the checksum for your list of box IDs?
 //
-// checksum = (#letters==2) x (#letters==3)
-// count box IDs with exactly 2 or 3 of any letter
+// checksum(ids) = (#anyletter(id)==2) x (#anyletter(id)==3)
+// count box IDs that contain exactly 2 or 3 of any letter
+// count_if any_of count_of any_letter in id is in {2,3}
 int part1(const box_ids& ids) {
-    const box_id alpha{"qwertyuiopasdfghjklzxcvbnm"};
-    const auto letter_counts = {2, 3};
-    auto has_n_of_any_char{[&](const auto& s, const auto& n) {
-        return any_of(alpha.cbegin(), alpha.cend(), [&](const char& c) {
-            return (n == std::count(s.cbegin(), s.cend(), c));
+    const box_id letters{"abcdefghijklmnopqrstuvwxyz"};
+    const auto exact_id_letter_repeats_to_match = {2, 3};
+
+    auto count_of_any_letter{[&](const auto& id, const auto& cnt) {
+        return any_of(letters.cbegin(), letters.cend(), [&](const char& c) {
+            return (cnt == std::count(id.cbegin(), id.cend(), c));
         });
     }};
-    auto ids_with_exactly{[&](const int& n) {
+    auto ids_with_exactly_n{[&](const int& n) {
         return std::count_if(ids.cbegin(), ids.cend(), [&](const auto& id) {
-            return has_n_of_any_char(id, n);
+            return count_of_any_letter(id, n);
         });
     }};
-    auto compute_checksum{[&](const auto counts) {
-        return std::accumulate(counts.begin(), counts.end(), 1,
-                               [&](int prod, const int cnt) {
-                                   return prod * ids_with_exactly(cnt);
+    auto compute_checksum_from{[&](const auto& repeats_counts) {
+        return std::accumulate(repeats_counts.begin(), repeats_counts.end(), 1,
+                               [&](const int& product, const int& repeats) {
+                                   return product * ids_with_exactly_n(repeats);
                                });
     }};
-    return compute_checksum(letter_counts);
-    // return ids_with_exactly(2) * ids_with_exactly(3);
+    return compute_checksum_from(exact_id_letter_repeats_to_match);
 }
+
 // int part1(box_ids& ids) {
 //     int dubs{0}, trip{0};
 //     for (box_id& id : ids) {
@@ -71,7 +73,7 @@ int part1(const box_ids& ids) {
 //     return dubs * trip;
 // }
 
-// Find the 2 box id's that differ by 1 character.
+// Find the 2 box id'id that differ by 1 character.
 // Compare every id pair: O(n^2)
 box_id part21(box_ids& ids) {
     for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
@@ -88,8 +90,8 @@ box_id part21(box_ids& ids) {
     return "No solution.";
 }
 
-// Find the 2 box id's that differ by 1 character.
-// Sort id's and hope they are adjacent: O(n) + O(n log n)
+// Find the 2 box id'id that differ by 1 character.
+// Sort id'id and hope they are adjacent: O(n) + O(n log n)
 box_id part22(box_ids& ids) {
     std::sort(ids.begin(), ids.end());
     for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
@@ -105,7 +107,7 @@ box_id part22(box_ids& ids) {
     return "No solution.";
 }
 
-// Find the 2 box id's that differ by 1 character.
+// Find the 2 box id'id that differ by 1 character.
 // Hash every box id substring and wait for a match.
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part23(box_ids& ids) {
