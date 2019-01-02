@@ -73,7 +73,7 @@ int part1(const box_ids& ids) {
 //     return dubs * trip;
 // }
 
-// Find the 2 box id'id that differ by 1 character.
+// Find the 2 box ids that differ by 1 character.
 // Compare every id pair: O(n^2)
 box_id part21(box_ids& ids) {
     for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
@@ -90,8 +90,8 @@ box_id part21(box_ids& ids) {
     return "No solution.";
 }
 
-// Find the 2 box id'id that differ by 1 character.
-// Sort id'id and hope they are adjacent: O(n) + O(n log n)
+// Find the 2 box ids that differ by 1 character.
+// Sort ids and hope they are adjacent: O(n) + O(n log n)
 box_id part22(box_ids& ids) {
     std::sort(ids.begin(), ids.end());
     for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
@@ -107,7 +107,7 @@ box_id part22(box_ids& ids) {
     return "No solution.";
 }
 
-// Find the 2 box id'id that differ by 1 character.
+// Find the 2 box ids that differ by 1 character.
 // Hash every box id substring and wait for a match.
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part23(box_ids& ids) {
