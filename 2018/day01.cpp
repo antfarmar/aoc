@@ -52,7 +52,7 @@ solutions solve(frequencies& freqs) {
 }
 
 // test suite of given examples
-void test_part(int part, bool verbose = 1) {
+void test_part(int part, bool verbose = false) {
     auto partf{(part == 1) ? part1 : part2};
     typedef std::pair<frequencies, int> test_case;
     typedef std::vector<test_case> test_suite;
