@@ -30,12 +30,12 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 //
 // checksum = (#letters==2) x (#letters==3)
 // count box IDs with exactly 2 or 3 of any letter
-int part1(box_ids& ids) {
+int part1(const box_ids& ids) {
     int dubs{0}, trip{0};
-    for (box_id& id : ids) {
+    for (const box_id& id : ids) {
         int cnt[26]{0};
         std::for_each(id.begin(), id.end(),
-                      [&cnt](char& c) { ++cnt[c - 'a']; });
+                      [&](const char& c) { ++cnt[c - 'a']; });
         dubs += std::any_of(std::begin(cnt), std::end(cnt),
                             [](int n) { return n == 2; })
                     ? 1
@@ -47,6 +47,23 @@ int part1(box_ids& ids) {
     }
     return dubs * trip;
 }
+// int part1(box_ids& ids) {
+//     int dubs{0}, trip{0};
+//     for (box_id& id : ids) {
+//         int cnt[26]{0};
+//         std::for_each(id.begin(), id.end(),
+//                       [&cnt](char& c) { ++cnt[c - 'a']; });
+//         dubs += std::any_of(std::begin(cnt), std::end(cnt),
+//                             [](int n) { return n == 2; })
+//                     ? 1
+//                     : 0;
+//         trip += std::any_of(std::begin(cnt), std::end(cnt),
+//                             [](int n) { return n == 3; })
+//                     ? 1
+//                     : 0;
+//     }
+//     return dubs * trip;
+// }
 
 // Find the 2 box id's that differ by 1 character.
 // Compare every id pair: O(n^2)
@@ -102,6 +119,33 @@ solutions solve(box_ids& ids) {
     return {part1(ids), part23(ids)};
 }
 
+// test suite of given examples
+void test_part(int part, bool verbose = true) {
+    auto partf{(part == 1) ? part1 : part1};
+    typedef std::pair<box_ids, int> test_case;
+    typedef std::vector<test_case> test_suite;
+    const test_suite part1_examples{
+        {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
+         12}};
+    auto report{[&](const auto& tcase, const auto& got) {
+        const auto& [input, output]{tcase};
+        std::cerr << "Part " << part << std::endl;
+        std::cerr << "For: " << input << std::endl;
+        std::cerr << "Exp: " << output << std::endl;
+        std::cerr << "Got: " << got << std::endl << std::endl;
+    }};
+    auto run_test{[&](const auto& tcase) {
+        const auto& [input, output]{tcase};
+        auto got = partf(input);
+        if (got != output)
+            report(tcase, got), abort();
+        if (verbose)
+            report(tcase, got);
+    }};
+    auto& examples{(partf == part1) ? part1_examples : part1_examples};
+    for_each(examples.cbegin(), examples.cend(), run_test);
+}
+
 // test the examples, parse the input data, then solve
 int main() {
     // housekeeping: speed up io (gotta go fast)
@@ -109,8 +153,8 @@ int main() {
     std::cin.tie(0);                    // unsync cin (from cout)
 
     // run some tests
-    // std::cerr << "Testing the examples...\n";
-    // test_part(1), test_part(2);
+    std::cerr << "Testing the examples...\n";
+    test_part(1);
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";
