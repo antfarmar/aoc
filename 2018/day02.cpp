@@ -58,7 +58,7 @@ int part1(const box_ids& ids) {
 // position in both strings)
 //
 // Find the 2 box ids that differ by 1 character at the same position
-// Hash every box id substring in to a set and check for a match
+// Hash every box id substring (of size-1) in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part2(const box_ids& ids) {
     box_ids id_subs(ids.size());   // box id substrings to test

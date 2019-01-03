@@ -21,8 +21,8 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
     return os;
 }
 
-// part 1
-// starting with a frequency of zero, what is the resulting frequency
+// Part 1
+// Starting with a frequency of zero, what is the resulting frequency
 // after all of the changes in frequency have been applied?
 //
 // just a simple fully accumulated sum of the frequency data
@@ -30,8 +30,8 @@ int part1(const frequencies& freqs) {
     return std::accumulate(freqs.cbegin(), freqs.cend(), 0);
 }
 
-// part 2
-// what is the first frequency your device reaches twice?
+// Part 2
+// What is the first frequency your device reaches twice?
 //
 // cycle through the partial sum frequencies until we get a recurrence
 int part2(const frequencies& freqs) {
