@@ -79,8 +79,8 @@ box_id part2(const box_ids& ids) {
     for (size_t char_pos{0}; char_pos < end_pos; char_pos++) {
         // transformation lambda to remove a character at current position
         auto remove_char{[&](auto s) {
-            // return s.substr(0, char_pos) + s.substr(char_pos + 1);
             return s.erase(char_pos, 1);
+            // return s.substr(0, char_pos) + s.substr(char_pos + 1);
         }};
         std::transform(ids.cbegin(), ids.cend(), id_subs.begin(), remove_char);
 
