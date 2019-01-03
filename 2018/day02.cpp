@@ -10,13 +10,11 @@
 #include <numeric>
 #include <sstream>
 #include <unordered_set>
-#include <variant>
 #include <vector>
 
 // type definitions for convenience and readability
 typedef std::string box_id;
 typedef std::vector<box_id> box_ids;
-typedef std::variant<int, box_id> result;
 typedef std::pair<int, box_id> solutions;
 
 // print a vector of type T
@@ -26,8 +24,8 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
     return os;
 }
 
-// part 1
-// what is the checksum for your list of box IDs?
+// Part 1
+// What is the checksum for your list of box IDs?
 //
 // checksum(ids) = (#anyletter(id)==2) x (#anyletter(id)==3)
 // count box IDs that contain exactly 2 or 3 of any letter
@@ -55,82 +53,64 @@ int part1(const box_ids& ids) {
     return compute_checksum_from(exact_id_letter_repeats_to_match);
 }
 
-// int part1(box_ids& ids) {
-//     int dubs{0}, trip{0};
-//     for (box_id& id : ids) {
-//         int cnt[26]{0};
-//         std::for_each(id.begin(), id.end(),
-//                       [&cnt](char& c) { ++cnt[c - 'a']; });
-//         dubs += std::any_of(std::begin(cnt), std::end(cnt),
-//                             [](int n) { return n == 2; })
-//                     ? 1
-//                     : 0;
-//         trip += std::any_of(std::begin(cnt), std::end(cnt),
-//                             [](int n) { return n == 3; })
-//                     ? 1
-//                     : 0;
-//     }
-//     return dubs * trip;
-// }
-
-// Find the 2 box ids that differ by 1 character.
-// Compare every id pair: O(n^2)
-box_id part21(box_ids& ids) {
-    for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
-        for (auto line2 = line1 + 1; line2 < ids.end(); ++line2) {
-            if ([&line1, &line2](int diff) {
-                    for (size_t i = 0; i < line1->length(); ++i)
-                        if (line1->at(i) != line2->at(i) && ++diff > 1)
-                            break;
-                    return diff == 1;
-                }(0))
-                return *line1 + "\n" + *line2;
-        }
-    }
-    return "No solution.";
-}
-
-// Find the 2 box ids that differ by 1 character.
-// Sort ids and hope they are adjacent: O(n) + O(n log n)
-box_id part22(box_ids& ids) {
-    std::sort(ids.begin(), ids.end());
-    for (auto line1 = ids.begin(); line1 < ids.end() - 1; ++line1) {
-        if ([&line1](int diff) {
-                auto line2 = line1 + 1;
-                for (size_t i = 0; i < line1->length(); ++i)
-                    if (line1->at(i) != line2->at(i) && ++diff > 1)
-                        break;
-                return diff == 1;
-            }(0))
-            return *line1 + "\n" + *++line1;
-    }
-    return "No solution.";
-}
-
-// Find the 2 box ids that differ by 1 character.
-// Hash every box id substring and wait for a match.
+// Part 2
+// What letters are common between the two correct box IDs?
+// (the boxes will have IDs which differ by exactly one character at the same
+// position in both strings)
+//
+// Find the 2 box ids that differ by 1 character at the same position
+// Hash every box id substring in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part2(const box_ids& ids) {
-    for (size_t i = 0; i < ids.size(); i++) {
-        std::unordered_set<box_id> set;
-        for (auto& id : ids) {
-            box_id sub = id.substr(0, i) + id.substr(i + 1);
-            if (!set.insert(sub).second)
-                return sub;
-        }
+    box_ids id_subs(ids.size());   // box id substrings
+    box_id result{"No solution"};  // solution memo
+
+    // duplicate id substring checking
+    std::unordered_set<box_id> seen;
+    auto unique{[&](const auto& s) {
+        auto [itr, unique] = seen.insert(s);
+        if (not unique)
+            result = s;  // side-effect to get result from iterator
+        return unique;
+    }};
+
+    // for every possible id character position
+    // remove exactly 1 character at the same position and check for a match
+    const size_t end_pos{ids[0].size()};
+    for (size_t char_pos{0}; char_pos < end_pos; char_pos++) {
+        // transformation lambda to remove a character at current position
+        auto remove_char{[&](auto s) {
+            // return s.substr(0, char_pos) + s.substr(char_pos + 1);
+            return s.erase(char_pos, 1);
+        }};
+        std::transform(ids.cbegin(), ids.cend(), id_subs.begin(), remove_char);
+
+        // check for an id substring match in this new id substring set
+        seen.clear();
+        if (not std::all_of(id_subs.cbegin(), id_subs.cend(), unique))
+            break;
     }
-    return "No solution.";
+    // non stl/algorithm version
+    // for (size_t i = 0; i < ids[0].size(); i++) {
+    //     std::unordered_set<box_id> set;
+    //     for (auto& id : ids) {
+    //         box_id sub = id.substr(0, i) + id.substr(i + 1);
+    //         if (!set.insert(sub).second)
+    //             return sub;
+    //     }
+    // }
+    return result;
 }
 
 // return the solution pair to main
-solutions solve(box_ids& ids) {
+solutions solve(const box_ids& ids) {
     return {part1(ids), part2(ids)};
 }
 
 // testing helper
-template <typename T, typename U>
+template <typename I, typename O>
 struct tester {
-    typedef std::pair<T, U> test_case;
+    typedef std::pair<I, O> test_case;
     typedef std::vector<test_case> test_suite;
     template <typename F>
     static void test(F partf, test_suite suite, bool verbose = true) {
@@ -152,13 +132,16 @@ struct tester {
     }
 };
 
-// testsuites of the given examples for part1 & part2
+// part 1 testsuite of the given examples
 const tester<box_ids, int>::test_suite part1_examples{
     {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
      12}};
+
+// part 2 testsuite of the given examples
 const tester<box_ids, box_id>::test_suite part2_examples{
     {{"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"}, "fgij"}};
 
+// main
 // test the examples, parse the input data, solve both parts, then report
 int main() {
     // housekeeping: speed up io (gotta go fast)
@@ -173,7 +156,7 @@ int main() {
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";
-    box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
+    const box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
 
     // time the solver
     std::cerr << "Solving the challenge...\n\n";
