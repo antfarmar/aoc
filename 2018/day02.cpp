@@ -26,13 +26,13 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 
 // Part 1
 // What is the checksum for your list of box IDs?
+// checksum(ids) = #(letter_repeat(id)==2) x #(letter_repeat(id)==3)
 //
-// checksum(ids) = (#anyletter(id)==2) x (#anyletter(id)==3)
-// count box IDs that contain exactly 2 or 3 of any letter
-// count_if any_of count_of any_letter in id is in {2,3}
+// count box IDs that contain exactly 2 or 3 repeats of any letter
+// product(count_if any_of count_of any_letter in id is in {2,3})
 int part1(const box_ids& ids) {
     const box_id letters{"abcdefghijklmnopqrstuvwxyz"};
-    const auto exact_id_letter_repeats_to_match = {2, 3};
+    const auto letter_repeat_counts_to_match = {2, 3};
 
     auto count_of_any_letter{[&](const auto& id, const auto& cnt) {
         return any_of(letters.cbegin(), letters.cend(), [&](const char& c) {
@@ -50,7 +50,7 @@ int part1(const box_ids& ids) {
                                    return product * ids_with_exactly_n(repeats);
                                });
     }};
-    return compute_checksum_from(exact_id_letter_repeats_to_match);
+    return compute_checksum_from(letter_repeat_counts_to_match);
 }
 
 // Part 2
@@ -62,7 +62,7 @@ int part1(const box_ids& ids) {
 // Hash every box id substring in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part2(const box_ids& ids) {
-    box_ids id_subs(ids.size());   // box id substrings
+    box_ids id_subs(ids.size());   // box id substrings to test
     box_id result{"No solution"};  // solution memo
 
     // duplicate id substring checking
@@ -70,7 +70,7 @@ box_id part2(const box_ids& ids) {
     auto unique{[&](const auto& s) {
         auto [itr, unique] = seen.insert(s);
         if (not unique)
-            result = s;  // side-effect to get result from iterator
+            result = s;  // side-effect to get result from all_of
         return unique;
     }};
 
