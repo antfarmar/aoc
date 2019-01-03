@@ -110,7 +110,7 @@ box_id part22(box_ids& ids) {
 // Find the 2 box ids that differ by 1 character.
 // Hash every box id substring and wait for a match.
 // O(n*m) where m = string length of the ids, space complexity = O(n)
-box_id part23(box_ids& ids) {
+box_id part2(const box_ids& ids) {
     for (size_t i = 0; i < ids.size(); i++) {
         std::unordered_set<box_id> set;
         for (auto& id : ids) {
@@ -124,46 +124,52 @@ box_id part23(box_ids& ids) {
 
 // return the solution pair to main
 solutions solve(box_ids& ids) {
-    return {part1(ids), part23(ids)};
+    return {part1(ids), part2(ids)};
 }
 
-// test suite of given examples
+// testing helper
 template <typename T, typename U>
-void test_part(int part, bool verbose = true) {
-    auto partf{(part == 1) ? part1 : part1};
+struct tester {
     typedef std::pair<T, U> test_case;
     typedef std::vector<test_case> test_suite;
-    const test_suite part1_examples{
-        {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
-         12}};
-    auto report{[&](const auto& tcase, const auto& got) {
-        const auto& [input, output]{tcase};
-        std::cerr << "Part " << part << std::endl;
-        std::cerr << "For: " << input << std::endl;
-        std::cerr << "Exp: " << output << std::endl;
-        std::cerr << "Got: " << got << std::endl << std::endl;
-    }};
-    auto run_test{[&](const auto& tcase) {
-        const auto& [input, output]{tcase};
-        auto got = partf(input);
-        if (got != output)
-            report(tcase, got), abort();
-        if (verbose)
-            report(tcase, got);
-    }};
-    auto& examples{(partf == part1) ? part1_examples : part1_examples};
-    for_each(examples.cbegin(), examples.cend(), run_test);
-}
+    template <typename F>
+    static void test(F partf, test_suite suite, bool verbose = true) {
+        auto report{[&](const auto& tcase, const auto& got) {
+            const auto& [input, output]{tcase};
+            std::cerr << "For: " << input << std::endl;
+            std::cerr << "Exp: " << output << std::endl;
+            std::cerr << "Got: " << got << std::endl << std::endl;
+        }};
+        auto run_test{[&](const auto& tcase) {
+            const auto& [input, output]{tcase};
+            const auto& got = partf(input);
+            if (got != output)
+                report(tcase, got), abort();
+            if (verbose)
+                report(tcase, got);
+        }};
+        for_each(suite.cbegin(), suite.cend(), run_test);
+    }
+};
 
-// test the examples, parse the input data, then solve
+// testsuites of the given examples for part1 & part2
+const tester<box_ids, int>::test_suite part1_examples{
+    {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
+     12}};
+const tester<box_ids, box_id>::test_suite part2_examples{
+    {{"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"}, "fgij"}};
+
+// test the examples, parse the input data, solve both parts, then report
 int main() {
     // housekeeping: speed up io (gotta go fast)
     std::ios_base::sync_with_stdio(0);  // unsync c++ streams (from c stdio)
     std::cin.tie(0);                    // unsync cin (from cout)
 
     // run some tests
-    std::cerr << "Testing the examples...\n";
-    test_part<box_ids, int>(1);
+    std::cerr << "Testing part 1 examples...\n";
+    tester<box_ids, int>::test<decltype(part1)>(part1, part1_examples);
+    std::cerr << "Testing part 2 examples...\n";
+    tester<box_ids, box_id>::test<decltype(part2)>(part2, part2_examples);
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";
