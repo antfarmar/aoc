@@ -52,38 +52,43 @@ solutions solve(frequencies& freqs) {
     return {part1(freqs), part2(freqs)};
 }
 
-// test suite of given examples
-void test_part(int part, bool verbose = false) {
-    auto partf{(part == 1) ? part1 : part2};
-    typedef std::pair<frequencies, int> test_case;
+// testing helper
+template <typename I, typename O>
+struct tester {
+    typedef std::pair<I, O> test_case;
     typedef std::vector<test_case> test_suite;
-    const test_suite part1_examples{{{+1, -2, +3, +1}, 3},
-                                    {{+1, +1, +1}, 3},
-                                    {{+1, +1, -2}, 0},
-                                    {{-1, -2, -3}, -6}};
-    const test_suite part2_examples{{part1_examples[0].first, 2},
-                                    {{+1, -1}, 0},
-                                    {{+3, +3, +4, -2, -4}, 10},
-                                    {{-6, +3, +8, +5, -6}, 5},
-                                    {{+7, +7, -2, -7, -4}, 14}};
-    auto report{[&](const auto& tcase, const auto& got) {
-        const auto& [input, output]{tcase};
-        std::cerr << "Part " << part << std::endl;
-        std::cerr << "For: " << input << std::endl;
-        std::cerr << "Exp: " << output << std::endl;
-        std::cerr << "Got: " << got << std::endl << std::endl;
-    }};
-    auto run_test{[&](const auto& tcase) {
-        const auto& [input, output]{tcase};
-        auto got = partf(input);
-        if (got != output)
-            report(tcase, got), abort();
-        if (verbose)
-            report(tcase, got);
-    }};
-    auto& examples{(partf == part1) ? part1_examples : part2_examples};
-    for_each(examples.cbegin(), examples.cend(), run_test);
-}
+    template <typename F>
+    static void test(F partf, test_suite suite, bool verbose = true) {
+        auto report{[&](const auto& tcase, const auto& got) {
+            const auto& [input, output]{tcase};
+            std::cerr << "For: " << input << std::endl;
+            std::cerr << "Exp: " << output << std::endl;
+            std::cerr << "Got: " << got << std::endl << std::endl;
+        }};
+        auto run_test{[&](const auto& tcase) {
+            const auto& [input, output]{tcase};
+            const auto& got = partf(input);
+            if (got != output)
+                report(tcase, got), abort();
+            if (verbose)
+                report(tcase, got);
+        }};
+        for_each(suite.cbegin(), suite.cend(), run_test);
+    }
+};
+
+// part 1 testsuite of the given examples
+const tester<frequencies, int>::test_suite suite1{{{+1, -2, +3, +1}, 3},
+                                                  {{+1, +1, +1}, 3},
+                                                  {{+1, +1, -2}, 0},
+                                                  {{-1, -2, -3}, -6}};
+
+// part 2 testsuite of the given examples
+const tester<frequencies, int>::test_suite suite2{{suite1[0].first, 2},
+                                                  {{+1, -1}, 0},
+                                                  {{+3, +3, +4, -2, -4}, 10},
+                                                  {{-6, +3, +8, +5, -6}, 5},
+                                                  {{+7, +7, -2, -7, -4}, 14}};
 
 // test the examples, parse the input data, then solve
 int main() {
@@ -92,8 +97,10 @@ int main() {
     std::cin.tie(0);                    // unsync cin (from cout)
 
     // run some tests
-    std::cerr << "Testing the examples...\n";
-    test_part(1), test_part(2);
+    std::cerr << "Testing part 1 examples...\n";
+    tester<frequencies, int>::test<decltype(part1)>(part1, suite1);
+    std::cerr << "Testing part 2 examples...\n";
+    tester<frequencies, int>::test<decltype(part2)>(part2, suite2);
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";

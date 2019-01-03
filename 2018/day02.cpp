@@ -133,12 +133,12 @@ struct tester {
 };
 
 // part 1 testsuite of the given examples
-const tester<box_ids, int>::test_suite part1_examples{
+const tester<box_ids, int>::test_suite suite1{
     {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
      12}};
 
 // part 2 testsuite of the given examples
-const tester<box_ids, box_id>::test_suite part2_examples{
+const tester<box_ids, box_id>::test_suite suite2{
     {{"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"}, "fgij"}};
 
 // main
@@ -150,9 +150,9 @@ int main() {
 
     // run some tests
     std::cerr << "Testing part 1 examples...\n";
-    tester<box_ids, int>::test<decltype(part1)>(part1, part1_examples);
+    tester<box_ids, int>::test<decltype(part1)>(part1, suite1);
     std::cerr << "Testing part 2 examples...\n";
-    tester<box_ids, box_id>::test<decltype(part2)>(part2, part2_examples);
+    tester<box_ids, box_id>::test<decltype(part2)>(part2, suite2);
 
     // parse the real input data
     std::cerr << "Parsing the input...\n";
