@@ -35,12 +35,12 @@ int part1(const frequencies& freqs) {
 //
 // cycle through the partial sum frequencies until we get a recurrence
 int part2(const frequencies& freqs) {
-    int idx{0}, sum{0};
+    int index{0}, sum{0};
     std::unordered_set<int> seen{sum};  // first sum is 0
 
-    auto cycle{[&](auto& v) { return v[idx++ % v.size()]; }};
-    auto partial_sums{[&](auto f) { return sum += f; }};
-    auto unique{[&](auto s) { return std::get<bool>(seen.insert(s)); }};
+    auto cycle{[&](const auto& v) { return v[index++ % v.size()]; }};
+    auto partial_sums{[&](const auto& f) { return sum += f; }};
+    auto unique{[&](const auto& s) { return std::get<bool>(seen.insert(s)); }};
 
     while (unique(partial_sums(cycle(freqs))))
         ;
