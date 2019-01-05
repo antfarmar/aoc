@@ -62,6 +62,7 @@ int main() {
 // Part 1
 // Starting with a frequency of zero, what is the resulting frequency
 // after all of the changes in frequency have been applied?
+// Solution: 520
 //
 // just a simple fully accumulated sum of the frequency data
 int part1(const frequencies& freqs) {
@@ -70,6 +71,7 @@ int part1(const frequencies& freqs) {
 
 // Part 2
 // What is the first frequency your device reaches twice?
+// Solution: 394
 //
 // cycle through the partial sum frequencies until we get a recurrence
 int part2(const frequencies& freqs) {
