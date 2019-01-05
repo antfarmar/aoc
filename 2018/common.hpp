@@ -26,7 +26,7 @@ struct runner {
         std::cerr << " (" << ms.count() << "ms)" << std::endl;
     }
 
-    // test the function on an input/output pair
+    // test the function on a vector of input/output pairs
     using test_case = std::pair<I, O>;
     using test_suite = std::vector<test_case>;
     static void test(F& partf, const test_suite& suite, bool verbose = true) {
