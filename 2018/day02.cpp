@@ -11,22 +11,61 @@
 #include <unordered_set>
 #include <vector>
 
-// type definitions for convenience and readability
-typedef std::string box_id;
-typedef std::vector<box_id> box_ids;
-typedef std::pair<int, box_id> solutions;
+// avoid duplicate code
+#include "common.hpp"
 
-// print a vector of type T
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
-    std::copy(v.cbegin(), v.cend(), std::ostream_iterator<T>(os, " "));
-    return os;
+/*****************************************************************************/
+
+// type aliases for convenience and readability
+using box_id = std::string;
+using box_ids = std::vector<box_id>;
+
+// function definitions of the solutions
+int part1(const box_ids& ids);
+box_id part2(const box_ids& ids);
+
+// more type aliases for convenience and readability
+using runner1 = runner<decltype(part1), box_ids, int>;
+using runner2 = runner<decltype(part2), box_ids, box_id>;
+
+/*****************************************************************************/
+
+// testsuite of the given examples for part 1
+const runner1::test_suite suite1{
+    {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
+     12}};
+
+// testsuite of the given examples for part 2
+const runner2::test_suite suite2{
+    {{"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"}, "fgij"}};
+
+/*****************************************************************************/
+
+// main: test the examples, parse the input data, solve both parts, then report
+int main() {
+    // run some tests
+    std::cerr << "Testing part 1 examples...\n";
+    runner1::test(part1, suite1);
+    std::cerr << "Testing part 2 examples...\n";
+    runner2::test(part2, suite2);
+
+    // parse the input data
+    std::cerr << "Parsing the input...\n";
+    const box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
+
+    // run, time, and output the solutions
+    std::cout << "\n--- Solutions ---\n";
+    runner1::run(part1, ids);
+    runner2::run(part2, ids);
 }
+
+/*****************************************************************************/
 
 // Part 1
 // What is the checksum for your list of box IDs?
-// checksum(ids) = #(letter_repeat(id)==2) x #(letter_repeat(id)==3)
+// Solution: 6916
 //
+// checksum(ids) = #(letter_repeat(id)==2) x #(letter_repeat(id)==3)
 // count box IDs that contain exactly 2 or 3 repeats of any letter
 // product(count_if any_of count_of any_letter in id is in {2,3})
 int part1(const box_ids& ids) {
@@ -54,9 +93,10 @@ int part1(const box_ids& ids) {
 
 // Part 2
 // What letters are common between the two correct box IDs?
+// Solution: oeylbtcxjqnzhgyylfapviusr
+//
 // (the boxes will have IDs which differ by exactly one character at the same
 // position in both strings)
-//
 // Find the 2 box ids that differ by 1 character at the same position
 // Hash every box id substring (of size-1) in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
@@ -99,80 +139,4 @@ box_id part2(const box_ids& ids) {
     //     }
     // }
     return result;
-}
-
-// return the solution pair to main
-solutions solve(const box_ids& ids) {
-    return {part1(ids), part2(ids)};
-}
-
-// testing helper
-template <typename I, typename O>
-struct tester {
-    typedef std::pair<I, O> test_case;
-    typedef std::vector<test_case> test_suite;
-    template <typename F>
-    static void test(F partf, test_suite suite, bool verbose = true) {
-        auto report{[&](const auto& tcase, const auto& got) {
-            const auto& [input, output]{tcase};
-            std::cerr << "For: " << input << std::endl;
-            std::cerr << "Exp: " << output << std::endl;
-            std::cerr << "Got: " << got << std::endl << std::endl;
-        }};
-        auto run_test{[&](const auto& tcase) {
-            const auto& [input, output]{tcase};
-            const auto& got = partf(input);
-            if (got != output)
-                report(tcase, got), abort();
-            if (verbose)
-                report(tcase, got);
-        }};
-        for_each(suite.cbegin(), suite.cend(), run_test);
-    }
-};
-
-// part 1 testsuite of the given examples
-const tester<box_ids, int>::test_suite suite1{
-    {{"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"},
-     12}};
-
-// part 2 testsuite of the given examples
-const tester<box_ids, box_id>::test_suite suite2{
-    {{"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"}, "fgij"}};
-
-// main
-// test the examples, parse the input data, solve both parts, then report
-int main() {
-    // housekeeping: speed up io (gotta go fast)
-    std::ios_base::sync_with_stdio(0);  // unsync c++ streams (from c stdio)
-    std::cin.tie(0);                    // unsync cin (from cout)
-
-    // run some tests
-    std::cerr << "Testing part 1 examples...\n";
-    tester<box_ids, int>::test<decltype(part1)>(part1, suite1);
-    std::cerr << "Testing part 2 examples...\n";
-    tester<box_ids, box_id>::test<decltype(part2)>(part2, suite2);
-
-    // parse the real input data
-    std::cerr << "Parsing the input...\n";
-    const box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
-
-    // time the solver
-    std::cerr << "Solving the challenge...\n\n";
-    auto start_time{std::chrono::high_resolution_clock::now()};
-    auto [part1, part2] = solve(ids);
-    auto end_time{std::chrono::high_resolution_clock::now()};
-
-    // convert duration timescale from nanoseconds to milliseconds
-    auto ms_count{std::chrono::duration_cast<std::chrono::milliseconds>(
-                      end_time - start_time)
-                      .count()};
-
-    // output the runtime
-    std::cerr << "After " << ms_count << "ms, we get..." << std::endl;
-
-    // output the solutions
-    std::cout << "\n--- Solutions ---\n";
-    std::cout << "Part 1: " << part1 << std::endl;  // 6916
-    std::cout << "Part 2: " << part2 << std::endl;  // oeylbtcxjqnzhgyylfapviusr
 }
