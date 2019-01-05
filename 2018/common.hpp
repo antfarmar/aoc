@@ -60,10 +60,10 @@ struct runner {
         _test_calls++;
         auto report_test{[&](const auto& tcase, const auto& got) {
             const auto& [input, output]{tcase};
-            std::cerr << "\nTesting part " << _test_calls << "...\n";
+            std::cerr << "Testing part " << _test_calls << "...\n";
             std::cerr << "For: " << input << std::endl;
             std::cerr << "Exp: " << output << std::endl;
-            std::cerr << "Got: " << got << std::endl;
+            std::cerr << "Got: " << got << std::endl << std::endl;
         }};
         auto run_test{[&](const auto& tcase) {
             const auto& [input, output]{tcase};
