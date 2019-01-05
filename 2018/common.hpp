@@ -1,3 +1,6 @@
+/******************************************************************************
+note to self: try to keep this file simple
+******************************************************************************/
 #pragma once
 
 // #include <algorithm>
@@ -6,7 +9,7 @@
 #include <iterator>
 #include <vector>
 
-// note to self: try to keep this file simple
+/*****************************************************************************/
 
 // housekeeping: unsync io (gotta go fast)
 int _before_main() {
@@ -17,12 +20,22 @@ int _before_main() {
 }
 int __bm = _before_main();
 
+/*****************************************************************************/
+
+// parse input stream into a vector of type T
+template <typename T>
+std::vector<T> parse(std::istream& is = std::cin) {
+    return std::vector<T>{std::istream_iterator<T>{is}, {}};
+}
+
 // print a vector of type T
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
     std::copy(v.cbegin(), v.cend(), std::ostream_iterator<T>(os, " "));
     return os;
 }
+
+/*****************************************************************************/
 
 // for output reporting
 int _run_calls{0};
