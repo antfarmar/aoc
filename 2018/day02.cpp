@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <vector>
 
-// avoid duplicate code
+// common code (to avoid duplicate code in each solution)
 #include "common.hpp"
 
 /*****************************************************************************/
@@ -24,7 +24,7 @@ using box_ids = std::vector<box_id>;
 int part1(const box_ids& ids);
 box_id part2(const box_ids& ids);
 
-// more type aliases for convenience and readability
+// more type aliases (for runner template)
 using runner1 = runner<decltype(part1), box_ids, int>;
 using runner2 = runner<decltype(part2), box_ids, box_id>;
 
@@ -43,10 +43,9 @@ const runner2::test_suite suite2{
 
 // main: test the examples, parse the input data, solve both parts, then report
 int main() {
-    // run some tests
-    std::cerr << "Testing part 1 examples...\n";
+    // run example tests
+    std::cerr << "Running tests...\n";
     runner1::test(part1, suite1);
-    std::cerr << "Testing part 2 examples...\n";
     runner2::test(part2, suite2);
 
     // parse the input data
@@ -54,7 +53,7 @@ int main() {
     const box_ids ids{std::istream_iterator<box_id>{std::cin}, {}};
 
     // run, time, and output the solutions
-    std::cout << "\n--- Solutions ---\n";
+    std::cerr << "Solving the challenge...\n";
     runner1::run(part1, ids);
     runner2::run(part2, ids);
 }
@@ -101,25 +100,26 @@ int part1(const box_ids& ids) {
 // Hash every box id substring (of size-1) in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
 box_id part2(const box_ids& ids) {
-    box_ids id_subs(ids.size());   // box id substrings to test
-    box_id result{"No solution"};  // solution memo
+    box_ids id_subs(ids.size());         // box id substrings to test
+    box_id common_chars{"No solution"};  // solution memo
 
     // duplicate id substring checking
     std::unordered_set<box_id> seen;
     auto unique{[&](const auto& s) {
         auto [itr, unique] = seen.insert(s);
         if (not unique)
-            result = s;  // side-effect to get result from all_of
+            common_chars = s;  // side-effect to get result from all_of
         return unique;
     }};
 
-    // for every possible id character position
-    // remove exactly 1 character at the same position and check for a match
+    // for every possible id character position in all ids...
+    // remove exactly 1 character at the same positions and check for a match
     const size_t end_pos{ids[0].size()};
     for (size_t char_pos{0}; char_pos < end_pos; char_pos++) {
         // transformation lambda to remove a character at current position
         auto remove_char{[&](auto s) {
-            return s.erase(char_pos, 1);
+            s.erase(char_pos, 1);
+            return s;
             // return s.substr(0, char_pos) + s.substr(char_pos + 1);
         }};
         std::transform(ids.cbegin(), ids.cend(), id_subs.begin(), remove_char);
@@ -129,14 +129,15 @@ box_id part2(const box_ids& ids) {
         if (not std::all_of(id_subs.cbegin(), id_subs.cend(), unique))
             break;
     }
-    // non stl/algorithm version
-    // for (size_t i = 0; i < ids[0].size(); i++) {
-    //     std::unordered_set<box_id> set;
-    //     for (auto& id : ids) {
-    //         box_id sub = id.substr(0, i) + id.substr(i + 1);
-    //         if (!set.insert(sub).second)
-    //             return sub;
-    //     }
-    // }
-    return result;
+    return common_chars;
 }
+
+// non stl/algorithm version
+// for (size_t i = 0; i < ids[0].size(); i++) {
+//     std::unordered_set<box_id> set;
+//     for (auto& id : ids) {
+//         box_id sub = id.substr(0, i) + id.substr(i + 1);
+//         if (!set.insert(sub).second)
+//             return sub;
+//     }
+// }
