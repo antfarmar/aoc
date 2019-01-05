@@ -44,7 +44,7 @@ const runner2::test_suite suite2{
 // main: test the examples, parse the input data, solve both parts, then report
 int main() {
     // run example tests
-    std::cerr << "Running tests...\n";
+    std::cerr << "Running the tests...\n";
     runner1::test(part1, suite1);
     runner2::test(part2, suite2);
 
