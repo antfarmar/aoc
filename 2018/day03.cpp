@@ -67,7 +67,7 @@ struct Fabric {
         auto claim_fabric_area = [&](const Claim& claim) {
             for (int row = claim.y; row < (claim.y + claim.h); row++)
                 for (int col = claim.x; col < (claim.x + claim.w); col++)
-                    claims_on_location[Fabric::loc2key(col, row)] += 1;
+                    ++claims_on_location[Fabric::loc2key(col, row)];
         };
         std::for_each(claims.cbegin(), claims.cend(), claim_fabric_area);
     };
