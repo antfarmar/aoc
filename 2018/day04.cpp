@@ -20,7 +20,8 @@ int main() {
 
     // Map guard ids to their sleep schedule array of minutes.
     std::unordered_map<int, std::array<int, 60>> guards;
-    int sleep_at = -1, *minutes_0 = nullptr;
+    int* minutes_0 = nullptr;
+    int sleep_at = -1;
     std::smatch match;
 
     // Parse the timestamps and compute all guard sleep schedules.
