@@ -128,6 +128,8 @@ box_id part2(const box_ids& ids) {
     return common_chars;
 }
 
+/*****************************************************************************/
+
 // Part 2_2 (using a hash set)
 // Hash every box id substring (of size-1) in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
