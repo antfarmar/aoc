@@ -59,6 +59,7 @@ struct Fabric {
     // ctor
     Fabric(std::istream& is) {
         claims = {std::istream_iterator<Claim>{is}, {}};
+        process_all_claims();
     };
 
     // add 1 to a fabric location's claim count for each location in each claim
@@ -83,7 +84,6 @@ struct Fabric {
 //
 // Count fabric locations with claim counts greater than or equal to 2
 int part1(Fabric& fabric) {
-    fabric.process_all_claims();
     auto gte_two = [](const auto& loc_count) { return loc_count.second >= 2; };
     return std::count_if(fabric.claims_on_location.cbegin(),
                          fabric.claims_on_location.cend(), gte_two);
