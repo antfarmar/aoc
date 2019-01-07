@@ -89,6 +89,8 @@ int part1(const Fabric& fabric) {
                          fabric.claims_on_location.cend(), gte_2);
 }
 
+/*****************************************************************************/
+
 // Part 2
 // What is the ID of the only claim that doesn't overlap?
 // Solution: 275
