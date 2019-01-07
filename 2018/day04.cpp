@@ -11,11 +11,11 @@
 #include <vector>
 
 int main() {
-    // Scan the date records as lines and sort them
-    std::vector<std::string> lines;
+    // Scan the date record event lines and sort them
+    std::vector<std::string> events;
     for (std::string ln; std::getline(std::cin, ln);)
-        lines.push_back(ln);
-    std::sort(lines.begin(), lines.end());  // chronological dates
+        events.push_back(ln);
+    std::sort(events.begin(), events.end());  // chronological dates
 
     // Map guard ids to their sleep schedule array of minutes.
     std::unordered_map<int, std::array<int, 60>> guards;
@@ -23,7 +23,7 @@ int main() {
     std::smatch match;
 
     // Parse the timestamps and compute all guard sleep schedules.
-    for (const auto& line : lines) {
+    for (const auto& line : events) {
         if (std::regex_search(line, match,
                               std::regex(R"(.*Guard #(\d+) begins shift)")))
             minutes_0 = guards[std::stoi(match[1])].data();
