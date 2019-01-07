@@ -103,7 +103,7 @@ int part1(const box_ids& ids) {
 // position in both strings)
 
 // Find the 2 box ids that differ by 1 character at the same position by
-// using the inner_product (ordered map/reduce) of id 2-combinations
+// using the inner_product (ordered map/reduce) of id 2-combination pairs
 // (!=) not_eq map, (+) sum reduce
 box_id part2(const box_ids& ids) {
     box_id common_chars{"No solution"};  // solution memo
