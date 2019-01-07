@@ -65,14 +65,17 @@ int main() {
 // Solution: 6916
 //
 // checksum(ids) = #(letter_repeat(id)==2) x #(letter_repeat(id)==3)
+
 // count box IDs that contain exactly 2 or 3 repeats of any letter
 // product(count_if any_of count_of any_letter in id is in {2,3})
 int part1(const box_ids& ids) {
-    const box_id letters{"abcdefghijklmnopqrstuvwxyz"};
+    // const box_id alpha{"abcdefghijklmnopqrstuvwxyz"};
     const auto letter_repeat_counts_to_match = {2, 3};
+    box_id alpha(26, '?');
+    std::iota(alpha.begin(), alpha.end(), 'a');
 
     auto count_of_any_letter{[&](const auto& id, const auto& cnt) {
-        return any_of(letters.cbegin(), letters.cend(), [&](const char& c) {
+        return any_of(alpha.cbegin(), alpha.cend(), [&](const char& c) {
             return (cnt == std::count(id.cbegin(), id.cend(), c));
         });
     }};
@@ -96,10 +99,40 @@ int part1(const box_ids& ids) {
 //
 // (the boxes will have IDs which differ by exactly one character at the same
 // position in both strings)
-// Find the 2 box ids that differ by 1 character at the same position
+
+// Find the 2 box ids that differ by 1 character at the same position by
+// using the inner_product (ordered map/reduce) of id 2-combinations
+// (!=) not_eq map, (+) sum reduce
+box_id part2(const box_ids& ids) {
+    box_id common_chars{"No solution"};  // solution memo
+
+    // for each id combination...
+    for (const box_id& id1 : ids)
+        for (const box_id& id2 : ids) {
+            if (id1 == id2)
+                continue;  // skip same
+
+            // reduce (+) on (!=) map b/w each (id1[i], id2[i]) char pair
+            int diff_cnt =
+                std::inner_product(id1.begin(), id1.end(), id2.begin(), 0,
+                                   std::plus<>{}, std::not_equal_to<>{});
+
+            // if only 1 character difference, done
+            if (diff_cnt == 1) {
+                common_chars = id1;
+                auto [itr1, itr2] = std::mismatch(
+                    common_chars.begin(), common_chars.end(), id2.begin());
+                common_chars.erase(itr1);
+                return common_chars;
+            }
+        }
+    return common_chars;
+}
+
+// Part 2_2 (using a hash set)
 // Hash every box id substring (of size-1) in to a set and check for a match
 // O(n*m) where m = string length of the ids, space complexity = O(n)
-box_id part2(const box_ids& ids) {
+box_id part2_2(const box_ids& ids) {
     box_ids id_subs(ids.size());         // box id substrings to test
     box_id common_chars{"No solution"};  // solution memo
 
