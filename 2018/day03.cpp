@@ -83,10 +83,10 @@ struct Fabric {
 // Solution: 115304
 //
 // Count fabric locations with claim counts greater than or equal to 2
-int part1(Fabric& fabric) {
-    auto gte_two = [](const auto& loc_count) { return loc_count.second >= 2; };
+int part1(const Fabric& fabric) {
+    auto gte_2 = [](const auto& loc_count) { return loc_count.second >= 2; };
     return std::count_if(fabric.claims_on_location.cbegin(),
-                         fabric.claims_on_location.cend(), gte_two);
+                         fabric.claims_on_location.cend(), gte_2);
 }
 
 // Part 2
@@ -94,7 +94,7 @@ int part1(Fabric& fabric) {
 // Solution: 275
 //
 // Find the only claim whose fabric location counts are all equal to 1
-int part2(Fabric& fabric) {
+int part2(const Fabric& fabric) {
     auto no_overlaps = [&](const Claim& claim) {
         for (int row = claim.y; row < (claim.y + claim.h); row++)
             for (int col = claim.x; col < (claim.x + claim.w); col++)
