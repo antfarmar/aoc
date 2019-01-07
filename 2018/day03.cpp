@@ -32,26 +32,26 @@ using FabricMap = std::unordered_map<int, int>;
 
 // global variable
 // efficiently maps a fabric grid location to its "claim mark" count
-// Key: bitwise-or of (x,y)
+// Key: bitwise-or of (x,y) location
 // Value: claim mark count
 // ie. (x, y)(x+w, y+h) -> (# of overlapping claims)
 FabricMap mark_count;
 
 /*****************************************************************************/
 
-// combine (x,y) locations into only 1 int (16-bits each)
+// Combine (x,y) claim locations into only 1 int key (x[31:16] | y[15:0])
 int Claim::to_key(int x, int y) {
-    return ((x << 15) | y);
+    return ((x << 15) bitor (y));
 }
 
-// Mark a fabric grid location by adding to its "mark count"
+// Mark a fabric grid location as claimed by adding to its "claim mark" count
 void Claim::mark() const {
     for (int row = y; row < (y + h); row++)
         for (int col = x; col < (x + w); col++)
             mark_count[Claim::to_key(col, row)] += 1;
 }
 
-// Check if a claim is safe on a fabric grid by counting marks
+// Check if a claim is safe on a fabric grid by counting claim marks
 // A safe claim has all of its marks == 1 (ie. no overlapping claims)
 bool Claim::safe() const {
     for (int row = y; row < (y + h); ++row)
@@ -86,16 +86,16 @@ std::istream& operator>>(std::istream& is, Claim& c) {
 // Count overlapping fabric claims
 int part1(const Claims& claims) {
     auto mark_claim = [](const Claim& claim) { claim.mark(); };
-    auto overlaps = [](const auto& mark_cnt) { return mark_cnt.second > 1; };
+    auto gte_two = [](const auto& clm_mrk) { return clm_mrk.second >= 2; };
     std::for_each(claims.cbegin(), claims.cend(), mark_claim);
-    return std::count_if(mark_count.cbegin(), mark_count.cend(), overlaps);
+    return std::count_if(mark_count.cbegin(), mark_count.cend(), gte_two);
 }
 
 // Part 2
 // What is the ID of the only claim that doesn't overlap?
 // Solution: 275
 //
-// Find the fabric claim location that doesn't overlap any other claim
+// Find the fabric claim that doesn't overlap any other claim (marks==1)
 int part2(const Claims& claims) {
     auto is_safe = [](const Claim& claim) { return claim.safe(); };
     auto&& safe_claim = std::find_if(claims.cbegin(), claims.cend(), is_safe);
