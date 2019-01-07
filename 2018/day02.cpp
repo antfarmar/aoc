@@ -93,6 +93,8 @@ int part1(const box_ids& ids) {
     return compute_checksum_from(letter_repeat_counts_to_match);
 }
 
+/*****************************************************************************/
+
 // Part 2
 // What letters are common between the two correct box IDs?
 // Solution: oeylbtcxjqnzhgyylfapviusr
