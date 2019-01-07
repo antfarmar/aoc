@@ -59,11 +59,11 @@ struct Fabric {
     // ctor
     Fabric(std::istream& is) {
         claims = {std::istream_iterator<Claim>{is}, {}};
-        process_all_claims();
+        claim_the_fabric();
     };
 
     // add 1 to a fabric location's claim count for each location in each claim
-    void process_all_claims() {
+    void claim_the_fabric() {
         auto claim_fabric_area = [&](const Claim& claim) {
             for (int row = claim.y; row < (claim.y + claim.h); row++)
                 for (int col = claim.x; col < (claim.x + claim.w); col++)
