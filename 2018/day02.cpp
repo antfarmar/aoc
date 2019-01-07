@@ -109,21 +109,18 @@ box_id part2(const box_ids& ids) {
     box_id common_chars{"No solution"};  // solution memo
 
     // for each id 2-combination (pair)...
-    for (const box_id& id1 : ids)
-        for (const box_id& id2 : ids) {
-            if (id1 == id2)
-                continue;  // skip same
-
+    for (auto id1 = ids.cbegin(); id1 < std::prev(ids.cend()); id1++)
+        for (auto id2 = std::next(id1); id2 < ids.cend(); id2++) {
             // (+) reduce on (!=) map b/w each (id1[i], id2[i]) char pair
             int diff_cnt =
-                std::inner_product(id1.begin(), id1.end(), id2.begin(), 0,
+                std::inner_product(id1->cbegin(), id1->cend(), id2->cbegin(), 0,
                                    std::plus<>{}, std::not_equal_to<>{});
 
             // if only 1 character difference, done
             if (diff_cnt == 1) {
-                common_chars = id1;
+                common_chars = *id1;
                 auto [itr1, itr2] = std::mismatch(
-                    common_chars.begin(), common_chars.end(), id2.begin());
+                    common_chars.cbegin(), common_chars.cend(), id2->cbegin());
                 common_chars.erase(itr1);
                 return common_chars;
             }
