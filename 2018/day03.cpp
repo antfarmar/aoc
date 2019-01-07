@@ -10,62 +10,18 @@
 #include <vector>
 
 // common code (to avoid duplicate code in each solution)
-#include "common.hpp"
+// #include "common.hpp"
 
 /*****************************************************************************/
 
-// Claim id, x-offset, y-offset, width, height
+// a rectangular claim on the fabric
 struct Claim {
-    int id, x, y, w, h;
-    void mark() const;
-    bool safe() const;
-    static int to_key(int x, int y);
+    int id, x, y, w, h;  // id, x-offset, y-offset, width, height
 };
 
 /*****************************************************************************/
 
-// type aliases for convenience and readability
-using Claims = std::vector<Claim>;
-using FabricMap = std::unordered_map<int, int>;
-
-/*****************************************************************************/
-
-// global variable
-// efficiently maps a fabric grid location to its "claim mark" count
-// Key: bitwise-or of (x,y) location
-// Value: claim mark count
-// ie. (x, y)(x+w, y+h) -> (# of overlapping claims)
-FabricMap mark_count;
-
-/*****************************************************************************/
-
-// Combine (x,y) claim locations into only 1 int key (x[31:16] | y[15:0])
-int Claim::to_key(int x, int y) {
-    return ((x << 15) bitor (y));
-}
-
-// Mark a fabric grid location as claimed by adding to its "claim mark" count
-void Claim::mark() const {
-    for (int row = y; row < (y + h); row++)
-        for (int col = x; col < (x + w); col++)
-            mark_count[Claim::to_key(col, row)] += 1;
-}
-
-// Check if a claim is safe on a fabric grid by counting claim marks
-// A safe claim has all of its marks == 1 (ie. no overlapping claims)
-bool Claim::safe() const {
-    for (int row = y; row < (y + h); ++row)
-        for (int col = x; col < (x + w); ++col)
-            if (mark_count.at(Claim::to_key(col, row)) > 1)
-                return false;
-    return true;
-}
-
-/*****************************************************************************/
-
-// Parse claims appropriately
-// for (std::string line; std::getline(is, line);)
-//     sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &id, &x, &y, &w, &h)
+// parse claims appropriately via an istream
 std::istream& operator>>(std::istream& is, Claim& c) {
     char skip;           // #id @ x,y: wxh
     is >> skip           // #
@@ -77,35 +33,84 @@ std::istream& operator>>(std::istream& is, Claim& c) {
     return is;
 }
 
+// parse via sscanf
+// for (std::string line; std::getline(is, line);)
+//     sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &id, &x, &y, &w, &h)
+
+/*****************************************************************************/
+
+// type aliases for convenience and readability
+using Claims = std::vector<Claim>;
+using LocationToClaimCount = std::unordered_map<int, int>;
+
+/*****************************************************************************/
+
+// Fabric with claims and claim location count records
+struct Fabric {
+    // all the elves claims to rectangular fabric locations
+    Claims claims;
+
+    // efficiently maps fabric locations to the # of claims there
+    // Key: bitwise-or of (x,y) location
+    // Value: # of claims on (x,y)
+    // ((x<<15)|y) -> (# of claims on (x,y))
+    LocationToClaimCount claims_on_location;
+
+    // ctor
+    Fabric(std::istream& is) {
+        claims = {std::istream_iterator<Claim>{is}, {}};
+    };
+
+    // add 1 to a fabric location's claim count for each location in each claim
+    void process_all_claims() {
+        auto claim_fabric_area = [&](const Claim& claim) {
+            for (int row = claim.y; row < (claim.y + claim.h); row++)
+                for (int col = claim.x; col < (claim.x + claim.w); col++)
+                    claims_on_location[Fabric::loc2key(col, row)] += 1;
+        };
+        std::for_each(claims.cbegin(), claims.cend(), claim_fabric_area);
+    };
+
+    // combines (x,y) claim locations into a single int key (x[31:16] | y[15:0])
+    static int loc2key(int x, int y) { return ((x << 15) bitor (y)); };
+};
+
 /*****************************************************************************/
 
 // Part 1
 // How many square inches of fabric are within two or more claims?
 // Solution: 115304
 //
-// Count overlapping fabric claims
-int part1(const Claims& claims) {
-    auto mark_claim = [](const Claim& claim) { claim.mark(); };
-    auto gte_two = [](const auto& clm_mrk) { return clm_mrk.second >= 2; };
-    std::for_each(claims.cbegin(), claims.cend(), mark_claim);
-    return std::count_if(mark_count.cbegin(), mark_count.cend(), gte_two);
+// Count fabric locations with claim counts greater than or equal to 2
+int part1(Fabric& fabric) {
+    fabric.process_all_claims();
+    auto gte_two = [](const auto& loc_count) { return loc_count.second >= 2; };
+    return std::count_if(fabric.claims_on_location.cbegin(),
+                         fabric.claims_on_location.cend(), gte_two);
 }
 
 // Part 2
 // What is the ID of the only claim that doesn't overlap?
 // Solution: 275
 //
-// Find the fabric claim that doesn't overlap any other claim (marks==1)
-int part2(const Claims& claims) {
-    auto is_safe = [](const Claim& claim) { return claim.safe(); };
-    auto&& safe_claim = std::find_if(claims.cbegin(), claims.cend(), is_safe);
+// Find the only claim whose fabric location counts are all equal to 1
+int part2(Fabric& fabric) {
+    auto no_overlaps = [&](const Claim& claim) {
+        for (int row = claim.y; row < (claim.y + claim.h); row++)
+            for (int col = claim.x; col < (claim.x + claim.w); col++)
+                if (fabric.claims_on_location.at(Fabric::loc2key(col, row)) > 1)
+                    return false;
+        return true;
+    };
+    auto&& safe_claim =
+        std::find_if(fabric.claims.cbegin(), fabric.claims.cend(), no_overlaps);
     return safe_claim->id;
 }
 
 /*****************************************************************************/
 
 int main() {
-    const Claims claims = parse<Claim>();
-    std::cout << "Part 1: Overlaps = " << part1(claims) << std::endl;  // 115304
-    std::cout << "Part 2: Safe Id# = " << part2(claims) << std::endl;  // 275
+    Fabric fabric(std::cin);
+    std::cout << "Part 1: Overlaps = " << part1(fabric) << std::endl;  // 115304
+    std::cout << "Part 2: Safe Id# = " << part2(fabric) << std::endl;  // 275
 }
