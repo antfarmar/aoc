@@ -14,7 +14,7 @@
 
 /*****************************************************************************/
 
-// a rectangular claim on the fabric
+// an elf's rectangular claim on the prototype fabric
 struct Claim {
     int id, x, y, w, h;  // id, x-offset, y-offset, width, height
 };
@@ -41,20 +41,20 @@ std::istream& operator>>(std::istream& is, Claim& c) {
 
 // type aliases for convenience and readability
 using Claims = std::vector<Claim>;
-using LocationToClaimCount = std::unordered_map<int, int>;
+using LocationToClaimCountMap = std::unordered_map<int, int>;
 
 /*****************************************************************************/
 
-// Fabric with claims and claim location count records
+// the prototype fabric with the elf claims and a location-to-claim-count map
 struct Fabric {
-    // all the elves claims to rectangular fabric locations
+    // all of the elves' claims
     Claims claims;
 
     // efficiently maps fabric locations to the # of claims there
     // Key: bitwise-or of (x,y) location
     // Value: # of claims on (x,y)
     // ((x<<15)|y) -> (# of claims on (x,y))
-    LocationToClaimCount claims_on_location;
+    LocationToClaimCountMap claims_on_location;
 
     // ctor
     Fabric(std::istream& is) {
@@ -102,7 +102,7 @@ int part2(const Fabric& fabric) {
                     return false;
         return true;
     };
-    auto&& safe_claim =
+    auto safe_claim =
         std::find_if(fabric.claims.cbegin(), fabric.claims.cend(), no_overlaps);
     return safe_claim->id;
 }
