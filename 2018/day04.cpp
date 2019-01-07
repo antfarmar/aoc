@@ -1,5 +1,6 @@
 // Advent of Code 2018
-// Day 04: Repose ln
+// Day 04: Repose Record
+// https://adventofcode.com/2018/day/4
 
 #include <algorithm>
 #include <array>
