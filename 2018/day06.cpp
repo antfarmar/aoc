@@ -33,13 +33,14 @@ int main() {
     // parse the input points
     std::vector<Point> points{std::istream_iterator<Point>{std::cin}, {}};
 
+    // point comparison lambdas
+    auto x_cmp = [](Point& p1, Point& p2) { return p1.x < p2.x; };
+    auto y_cmp = [](Point& p1, Point& p2) { return p1.y < p2.y; };
+    auto area_cmp = [](Point& p1, Point& p2) { return p1.area < p2.area; };
+
     // compute bounding box of points
-    auto x_bounds =
-        std::minmax_element(points.begin(), points.end(),
-                            [](Point& p1, Point& p2) { return p1.x < p2.x; });
-    auto y_bounds =
-        std::minmax_element(points.begin(), points.end(),
-                            [](Point& p1, Point& p2) { return p1.y < p2.y; });
+    auto x_bounds = std::minmax_element(points.begin(), points.end(), x_cmp);
+    auto y_bounds = std::minmax_element(points.begin(), points.end(), y_cmp);
 
     int x_min = x_bounds.first->x;
     int y_min = y_bounds.first->y;
@@ -71,11 +72,10 @@ int main() {
                 ++region_size;
         }
 
-    int largestArea =
-        std::max_element(points.begin(), points.end(),
-                         [](Point& p1, Point& p2) { return p1.area < p2.area; })
-            ->area;
-    std::cout << "[Part 1] Largest Area = " << largestArea
+    int largest_area =
+        std::max_element(points.begin(), points.end(), area_cmp)->area;
+
+    std::cout << "[Part 1] Largest Area = " << largest_area
               << std::endl;  // 3722
     std::cout << "[Part 2] Region Size  = " << region_size
               << std::endl;  // 44634
