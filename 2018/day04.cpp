@@ -55,6 +55,7 @@ timecards fillout_timecards(timestamps& guard_events) {
     return cards;
 }
 
+// main
 int main() {
     // the timestamped guard shift events
     timestamps guard_events{parse_lines(std::cin)};
@@ -72,7 +73,9 @@ int main() {
     // Part 1
     // Strategy 1: Find the guard that has the most minutes asleep. What minute
     // does that guard spend asleep the most?
-    // Solution: Guard #1021 x Minute 30 = 30630
+    // Solution: 30630 (Guard #1021 x Minute 30)
+
+    // compare the total time slept of all the guards (max sum of all minutes)
     const auto& [guard_id1, guard_minutes1] = *std::max_element(
         cards.cbegin(), cards.cend(), [](const auto& L, const auto& R) {
             auto sum_time_slept = [](const auto& min_arr) {
@@ -86,14 +89,16 @@ int main() {
     // Part 2
     // Strategy 2: Of all guards, which guard is most frequently asleep on the
     // same minute?
-    // Solution: Guard #3331 x Minute 41 = 136571
+    // Solution: 136571 (Guard #3331 x Minute 41)
+
+    // compare the max sleep minute amount of all the guards (max of maxms)
     const auto& [guard_id2, guard_minutes2] = *std::max_element(
         cards.cbegin(), cards.cend(), [&](const auto& L, const auto& R) {
             const auto& [L_id, L_minutes] = L;
             const auto& [R_id, R_minutes] = R;
-            const auto&& [L_index, L_sleep_cnt] = max_minute_asleep(L_minutes);
-            const auto&& [R_index, R_sleep_cnt] = max_minute_asleep(R_minutes);
-            return L_sleep_cnt < R_sleep_cnt;
+            const auto&& [L_index, L_max_sleep] = max_minute_asleep(L_minutes);
+            const auto&& [R_index, R_max_sleep] = max_minute_asleep(R_minutes);
+            return L_max_sleep < R_max_sleep;
         });
 
     // retrieve the sleepiest minute for each of the sleepiest guards found
@@ -101,13 +106,10 @@ int main() {
     const auto& [max_minute2, cnt2] = max_minute_asleep(guard_minutes2);
 
     // output the solutions
-    // Part 1: Guard #1021 x Minute 30 = 30630
-    // Part 2: Guard #3331 x Minute 41 = 136571
-    std::cout << "Part 1: "
-              << "Guard #" << guard_id1 << " x Minute " << max_minute1 << " = "
-              << max_minute1 * guard_id1 << "\n"
-              << "Part 2: "
-              << "Guard #" << guard_id2 << " x Minute " << max_minute2 << " = "
-              << max_minute2 * guard_id2 << "\n"
+    std::cout << "Part 1: " << max_minute1 * guard_id1 << "\t(Guard #"
+              << guard_id1 << " x Minute " << max_minute1 << ")\n";
+
+    std::cout << "Part 2: " << max_minute2 * guard_id2 << "\t(Guard #"
+              << guard_id2 << " x Minute " << max_minute2 << ")\n"
               << std::flush;
 }
