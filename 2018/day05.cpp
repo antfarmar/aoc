@@ -42,7 +42,7 @@ int main() {
     // Solution: 5124
 
     // Remove all units of exactly one type and react the result, once per unit
-    char units[26];                                      // lowercase alphabet
+    static char units[26];                               // lowercase alphabet
     std::iota(std::begin(units), std::end(units), 'a');  // a-z
 
     // for (char unit = 'a'; unit <= 'z'; unit++) {
