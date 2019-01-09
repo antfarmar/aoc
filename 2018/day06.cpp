@@ -18,10 +18,6 @@ struct Point {
 };
 
 int main() {
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0);
-    std::cout.tie(0);
-
     // Input points
     std::vector<Point> pts{std::istream_iterator<Point>{std::cin}, {}};
 
