@@ -36,7 +36,7 @@ int main() {
     // point comparison lambdas
     auto x_cmp = [](Point& p1, Point& p2) { return p1.x < p2.x; };
     auto y_cmp = [](Point& p1, Point& p2) { return p1.y < p2.y; };
-    auto area_cmp = [](Point& p1, Point& p2) { return p1.area < p2.area; };
+    auto a_cmp = [](Point& p1, Point& p2) { return p1.area < p2.area; };
 
     // compute bounding box of points
     auto x_bounds = std::minmax_element(points.begin(), points.end(), x_cmp);
@@ -47,7 +47,7 @@ int main() {
     int x_max = x_bounds.second->x;
     int y_max = y_bounds.second->y;
 
-    // for each (x,y) grid location, find the closest input point
+    // for each (x,y) bounding box location, find the closest input point
     int region_size = 0;
     int cutoff = 10000;
     for (int y = y_min; y <= y_max; y++)        // for each row
@@ -64,19 +64,20 @@ int main() {
                 else if (cur_dst == min_dst)
                     tied = true;
             }
-            if (not tied)  // part 1
-                ++points[idx].area;
+
+            if (not tied)
+                ++points[idx].area;  // part 1
+
             if ((x == x_min || x == x_max || y == y_min || y == y_max))
                 points[idx].area = -inf;  // set border points to -infinity
-            if (tot_dst < cutoff)         // part 2
-                ++region_size;
+
+            if (tot_dst < cutoff)
+                ++region_size;  // part 2
         }
 
-    int largest_area =
-        std::max_element(points.begin(), points.end(), area_cmp)->area;
+    int max_area = std::max_element(points.begin(), points.end(), a_cmp)->area;
 
-    std::cout << "[Part 1] Largest Area = " << largest_area
-              << std::endl;  // 3722
-    std::cout << "[Part 2] Region Size  = " << region_size
+    std::cout << "Part 1: Largest Area = " << max_area << std::endl;  // 3722
+    std::cout << "Part 2: Region Size  = " << region_size
               << std::endl;  // 44634
 }
