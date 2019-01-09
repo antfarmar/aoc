@@ -29,7 +29,7 @@ int main() {
 
     timecards cards;            // maps guard ids to sleep counts per minute
     int* minutes_00 = nullptr;  // ptr to a guard's sleep schedule array
-    size_t slept_at, wakes_at;  // minutes parsed from timestamps
+    int slept_at, wakes_at;     // minutes parsed from timestamps
     std::smatch match;          // regex matcher
 
     // parse the sorted timestamps and compute each guard's sleep habits per min
