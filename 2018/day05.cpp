@@ -24,15 +24,17 @@ int main() {
     // abs(A-a) == xor(A,a) == A^a == 0x20 == 32
     // *top != *cur && (toupper(*top) == toupper(*cur))) toupper(x) == c & 0xDF
     auto react = [](polymer poly) {  // call-by-value copy (modified)
-        auto size = poly.size();
-        for (auto top = poly.begin(), cur = top + 1; cur != poly.end();)
-            if ((*top ^ *cur) == 0x20)
-                cur++, (top == poly.begin()) ? top : top--, size -= 2;
+        size_t size = poly.size();
+        poly.insert(std::begin(poly), '^');  // top of the stack sentinel
+        auto top = std::next(poly.begin());  // ie. '^' pushed on stack
+        for (auto cur = std::next(top); cur != poly.end(); cur++)
+            if ((*top ^ *cur) == 32)  // opposite case of same letter
+                --top, size -= 2;     // pop, dec size by match size of 2
             else
-                std::swap(*(++top), *(cur++));
+                std::iter_swap(++top, cur);
         return size;
     };
-    size_t size1 = react(the_polymer);
+    size_t part1_size = react(the_polymer);
 
     // Part 2
     // What is the length of the shortest polymer you can produce by removing
@@ -42,16 +44,16 @@ int main() {
     // Remove all units of exactly one type and react the result, once per unit
     char units[26];
     std::iota(std::begin(units), std::end(units), 'a');  // a-z
-    size_t size2 = SIZE_MAX;
+    size_t part2_size = SIZE_MAX;
     for (char& unit : units) {  // for (char unit = 'a'; unit <= 'z'; unit++) {
         polymer poly = the_polymer;  // work on a copy since we mutate
         auto zip = std::array{unit, char(toupper(unit))};  // {a,A}
         for (char& c : zip)
             poly.erase(std::remove(poly.begin(), poly.end(), c), poly.end());
-        size2 = std::min(size2, react(poly));
+        part2_size = std::min(part2_size, react(poly));
     }
 
     // Output the solutions.
-    std::cout << "Part 1: " << size1 << "\n"   // 11546
-              << "Part 2: " << size2 << "\n";  // 5124
+    std::cout << "Part 1: " << part1_size << "\n"   // 11546
+              << "Part 2: " << part2_size << "\n";  // 5124
 }
