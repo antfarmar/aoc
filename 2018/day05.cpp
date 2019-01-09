@@ -50,9 +50,10 @@ int main() {
     size_t part2_size = SIZE_MAX;
     for (char& unit : units) {
         polymer poly = the_polymer;  // work on a copy since we mutate
-        char zip[2] = {unit, char(toupper(unit))};  // e.g. {a,A}
-        for (char& cC : zip)
-            poly.erase(std::remove(poly.begin(), poly.end(), cC), poly.end());
+        auto eq_un = [&](const char& c) { return unit == tolower(c); };
+        // char zip[2] = {unit, char(toupper(unit))};  // e.g. {a,A}
+        // for (char& cC : zip)
+        poly.erase(std::remove_if(poly.begin(), poly.end(), eq_un), poly.end());
         part2_size = std::min(part2_size, react(poly));
     }
 
