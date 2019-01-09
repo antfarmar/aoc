@@ -55,7 +55,7 @@ int main() {
         part2_size = std::min(part2_size, react(poly));
     }
 
-    // Output the solutions.
+    // output the solutions
     std::cout << "Part 1: " << part1_size << "\n"   // 11546
               << "Part 2: " << part2_size << "\n";  // 5124
 }
