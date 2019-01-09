@@ -23,15 +23,16 @@ int main() {
     // Simulate a stack with pointers and swap units in place
     // abs(A-a) == xor(A,a) == A^a == 0x20 == 32
     // *top != *cur && (toupper(*top) == toupper(*cur))) toupper(x) == c & 0xDF
-    auto react = [](polymer poly) {          // call-by-value copy (modified)
-        size_t size = poly.size();           // start size (original)
-        poly.insert(std::begin(poly), '^');  // top of the stack sentinel
-        auto top = std::next(poly.begin());  // ie. '^' pushed on stack
-        for (auto cur = std::next(top); cur != poly.end(); cur++)
+    auto react = [](polymer& poly) {  // uses reverse iterator for efficiency
+        size_t size = poly.size();    // start size (original)
+        poly.push_back('^');          // top of the stack sentinel (temporary)
+        auto top = std::next(poly.rbegin());  // ie. '^' pushed on stack
+        for (auto cur = std::next(top); cur != poly.rend(); cur++)
             if ((*top ^ *cur) == 32)  // opposite cases of same letter
                 --top, size -= 2;     // pop, dec size by match size of 2
             else
-                std::iter_swap(++top, cur);
+                std::iter_swap(++top, cur);  // push, and advance
+        poly.pop_back();  // restore the polymer back to its original state
         return size;
     };
     size_t part1_size = react(the_polymer);
