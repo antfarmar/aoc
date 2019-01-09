@@ -23,12 +23,12 @@ int main() {
     // Simulate a stack with pointers and swap units in place
     // abs(A-a) == xor(A,a) == A^a == 0x20 == 32
     // *top != *cur && (toupper(*top) == toupper(*cur))) toupper(x) == c & 0xDF
-    auto react = [](polymer poly) {  // call-by-value copy (modified)
-        size_t size = poly.size();
+    auto react = [](polymer poly) {          // call-by-value copy (modified)
+        size_t size = poly.size();           // start size (original)
         poly.insert(std::begin(poly), '^');  // top of the stack sentinel
         auto top = std::next(poly.begin());  // ie. '^' pushed on stack
         for (auto cur = std::next(top); cur != poly.end(); cur++)
-            if ((*top ^ *cur) == 32)  // opposite case of same letter
+            if ((*top ^ *cur) == 32)  // opposite cases of same letter
                 --top, size -= 2;     // pop, dec size by match size of 2
             else
                 std::iter_swap(++top, cur);
@@ -42,14 +42,16 @@ int main() {
     // Solution: 5124
 
     // Remove all units of exactly one type and react the result, once per unit
-    char units[26];
+    char units[26];                                      // lowercase alphabet
     std::iota(std::begin(units), std::end(units), 'a');  // a-z
     size_t part2_size = SIZE_MAX;
-    for (char& unit : units) {  // for (char unit = 'a'; unit <= 'z'; unit++) {
+
+    // for (char unit = 'a'; unit <= 'z'; unit++) {
+    for (char& unit : units) {
         polymer poly = the_polymer;  // work on a copy since we mutate
-        auto zip = std::array{unit, char(toupper(unit))};  // {a,A}
-        for (char& c : zip)
-            poly.erase(std::remove(poly.begin(), poly.end(), c), poly.end());
+        char zip[2] = {unit, char(toupper(unit))};  // e.g. {a,A}
+        for (char& cC : zip)
+            poly.erase(std::remove(poly.begin(), poly.end(), cC), poly.end());
         part2_size = std::min(part2_size, react(poly));
     }
 
