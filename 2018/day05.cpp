@@ -22,7 +22,7 @@ int main() {
     // Fully react the polymer: remove adjacent pairs from aA to zZ
     // Simulate a stack with pointers and swap units in place
     // abs(A-a) == xor(A,a) == A^a == 0x20 == 32
-    // *top != *cur && (toupper(*top) == toupper(*cur))) toupper(x) == c & 0xDF
+    // *top != *cur && (toupper(*top) == toupper(*cur))) toupper(c) == c & 0xDF
     auto react = [](polymer& poly) {  // uses reverse iterator for efficiency
         size_t size = poly.size();    // start size (original)
         poly.push_back('^');          // top of the stack sentinel (temporary)
