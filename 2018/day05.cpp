@@ -8,9 +8,16 @@
 #include <numeric>
 #include <string>
 
+// type aliases for convenience and readability
+using polymer = std::string;
+
 int main() {
-    std::string data;
-    std::getline(std::cin, data);  // std::cin >> data;
+    polymer the_polymer;
+    std::getline(std::cin, the_polymer);  // std::cin >> the_polymer;
+
+    // Part 1
+    // How many units remain after fully reacting the polymer you scanned?
+    // Solution: 11546
 
     // Fully react the polymer: remove adjacent pairs from aA to zZ
     // Simulate a stack with pointers and swap units in place
@@ -25,14 +32,19 @@ int main() {
                 std::swap(*(++top), *(cur++));
         return total;
     };
-    size_t size1 = react(data);
+    size_t size1 = react(the_polymer);
+
+    // Part 2
+    // What is the length of the shortest polymer you can produce by removing
+    // all units of exactly one type and fully reacting the result?
+    // Solution: 5124
 
     // Remove all units of exactly one type and react the result, once per unit
     char units[26];
     std::iota(std::begin(units), std::end(units), 'a');  // a-z
     size_t size2 = SIZE_MAX;
     for (char& unit : units) {  // for (char unit = 'a'; unit <= 'z'; unit++) {
-        auto poly = data;       // work on a copy since we mutate the data
+        auto poly = the_polymer;  // work on a copy since we mutate the polymer
         auto zip = std::array{unit, char(toupper(unit))};  // {a,A}
         for (char& c : zip)
             poly.erase(std::remove(poly.begin(), poly.end(), c), poly.end());
