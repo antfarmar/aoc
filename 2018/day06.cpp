@@ -22,9 +22,9 @@ struct Coord {
     int distance(int xx, int yy) { return abs(x - xx) + abs(y - yy); }
 
     // parses a coordinate from the input stream
-    friend std::istream& operator>>(std::istream& is, Coord& p) {
+    friend std::istream& operator>>(std::istream& is, Coord& c) {
         char comma;
-        is >> p.x >> comma >> p.y;
+        is >> c.x >> comma >> c.y;
         return is;
     }
 };
@@ -34,9 +34,9 @@ int main() {
     std::vector<Coord> coords{std::istream_iterator<Coord>{std::cin}, {}};
 
     // coordinate comparison lambdas
-    auto x_cmp = [](Coord& p1, Coord& p2) { return p1.x < p2.x; };
-    auto y_cmp = [](Coord& p1, Coord& p2) { return p1.y < p2.y; };
-    auto a_cmp = [](Coord& p1, Coord& p2) { return p1.area < p2.area; };
+    auto x_cmp = [](Coord& c1, Coord& c2) { return c1.x < c2.x; };
+    auto y_cmp = [](Coord& c1, Coord& c2) { return c1.y < c2.y; };
+    auto a_cmp = [](Coord& c1, Coord& c2) { return c1.area < c2.area; };
 
     // determine the bounding box of the coordinates
     auto x_bounds = std::minmax_element(coords.begin(), coords.end(), x_cmp);
