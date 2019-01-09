@@ -48,7 +48,7 @@ int main() {
 
     // for (char unit = 'a'; unit <= 'z'; unit++) {
     size_t part2_size = SIZE_MAX;
-    for (char& unit : units) {
+    for (const char& unit : units) {
         polymer poly = the_polymer;  // work on a copy since we mutate
         auto eq_un = [&](const char& c) { return unit == tolower(c); };
         // char zip[2] = {unit, char(toupper(unit))};  // e.g. {a,A}
