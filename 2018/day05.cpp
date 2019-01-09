@@ -44,9 +44,9 @@ int main() {
     // Remove all units of exactly one type and react the result, once per unit
     char units[26];                                      // lowercase alphabet
     std::iota(std::begin(units), std::end(units), 'a');  // a-z
-    size_t part2_size = SIZE_MAX;
 
     // for (char unit = 'a'; unit <= 'z'; unit++) {
+    size_t part2_size = SIZE_MAX;
     for (char& unit : units) {
         polymer poly = the_polymer;  // work on a copy since we mutate
         char zip[2] = {unit, char(toupper(unit))};  // e.g. {a,A}
