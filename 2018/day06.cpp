@@ -6,7 +6,6 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
-using namespace std;
 
 struct Point {
     int x{0}, y{0}, area{0};
@@ -19,20 +18,20 @@ struct Point {
 };
 
 int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
 
     // Input points
-    vector<Point> pts{istream_iterator<Point>{cin}, {}};
+    std::vector<Point> pts{std::istream_iterator<Point>{std::cin}, {}};
 
     // Compute bounding box of points
     auto boundsX =
-        minmax_element(pts.begin(), pts.end(),
-                       [](Point& p1, Point& p2) { return p1.x < p2.x; });
+        std::minmax_element(pts.begin(), pts.end(),
+                            [](Point& p1, Point& p2) { return p1.x < p2.x; });
     auto boundsY =
-        minmax_element(pts.begin(), pts.end(),
-                       [](Point& p1, Point& p2) { return p1.y < p2.y; });
+        std::minmax_element(pts.begin(), pts.end(),
+                            [](Point& p1, Point& p2) { return p1.y < p2.y; });
     int minX = boundsX.first->x, maxX = boundsX.second->x;
     int minY = boundsY.first->y, maxY = boundsY.second->y;
 
@@ -68,9 +67,11 @@ int main() {
     // }
     // int largestArea = (pts.end() - 1)->area;
     int largestArea =
-        max_element(pts.begin(), pts.end(),
-                    [](Point& p1, Point& p2) { return p1.area < p2.area; })
+        std::max_element(pts.begin(), pts.end(),
+                         [](Point& p1, Point& p2) { return p1.area < p2.area; })
             ->area;
-    cout << "[Part 1] Largest Area = " << largestArea << endl;  // 3722
-    cout << "[Part 2] Region Size  = " << regionSize << endl;   // 44634
+    std::cout << "[Part 1] Largest Area = " << largestArea
+              << std::endl;  // 3722
+    std::cout << "[Part 2] Region Size  = " << regionSize
+              << std::endl;  // 44634
 }
