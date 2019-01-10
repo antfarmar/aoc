@@ -58,11 +58,12 @@ JobSequence part1(DAG jobsDAG) {
 // With 5 workers and 60+ second job durations, how long will it take
 // to complete all of the jobs?
 // Your puzzle answer was 1020
-int part2(DAG jobsDAG, int numWorkers, int extraTime) {
+int part2(DAG jobsDAG, const int numWorkers, const int jobDuration) {
     std::vector<Worker> workers(numWorkers);
     bool allWorkersIdle = true;
     int timeElapsed = -1;
 
+    // assign jobs to elves until all jobs done
     while (not(jobsDAG.empty() and allWorkersIdle)) {
         timeElapsed++;
         // has any elf worker completed a job?
@@ -73,14 +74,14 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
                     deps.erase(elf.job);
             }
         }
-        // assign jobs to idle elves while available
+        // assign jobs to idle elves while still available
         JobQueue freeJobs = getFreeJobs(jobsDAG);
         allWorkersIdle = true;
         for (Worker& elf : workers) {
             if (elf.idle and not freeJobs.empty()) {
                 elf.idle = false;
                 elf.job = freeJobs.front();
-                elf.timeToFinishJob = extraTime + int(elf.job - 'A') + 1;
+                elf.timeToFinishJob = jobDuration + int(elf.job - 'A') + 1;
                 freeJobs.pop_front();
                 jobsDAG.erase(elf.job);
             }
