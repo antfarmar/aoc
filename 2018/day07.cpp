@@ -16,7 +16,7 @@ using JobSequence = std::string;
 using JobQueue = std::deque<Job>;
 
 // DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
-// the DAG represents jobs and their dependencies (job)->(jobs to do firstJob)
+// the DAG represents jobs and their dependencies (job)->(jobs it depends on)
 // ordered map/set since job ordering ties rely on sorted jobs (chars)
 using DAG = std::map<Job, std::set<Job>>;
 
@@ -42,14 +42,14 @@ JobQueue getReadyJobs(DAG& jobsDAG) {
 JobSequence part1(DAG jobsDAG) {
     JobSequence jobOrder;
 
-    do {
+    while (!jobsDAG.empty()) {
         JobQueue readyJobs = getReadyJobs(jobsDAG);
-        Job firstJob = readyJobs.front();
+        Job nextJob = readyJobs.front();
         for (auto& [_, deps] : jobsDAG)
-            deps.erase(firstJob);
-        jobOrder.push_back(firstJob);
-        jobsDAG.erase(firstJob);
-    } while (!jobsDAG.empty());
+            deps.erase(nextJob);
+        jobOrder.push_back(nextJob);
+        jobsDAG.erase(nextJob);
+    }
 
     return jobOrder;
 }
