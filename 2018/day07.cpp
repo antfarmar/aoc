@@ -12,7 +12,14 @@
 using namespace std;
 using DAG = map<char, set<char>>;
 
-// Find jobs that have no dependencies in the jobsDAG.
+// helper struct for part 2
+struct Worker {
+    bool idle{true};
+    char job{0};
+    int timeToFinish{0};
+};
+
+// Find jobs that have no dependencies in the jobsDAG
 deque<char> getReadyJobs(DAG& jobsDAG) {
     deque<char> readyJobs;
     for (auto& [job, deps] : jobsDAG)
@@ -21,15 +28,26 @@ deque<char> getReadyJobs(DAG& jobsDAG) {
     return readyJobs;
 }
 
-// Helper struct for part 2.
-struct Worker {
-    bool idle{true};
-    char job{0};
-    int timeToFinish{0};
-};
+// Part 1
+// In what order should the jobs in your instructions be completed?
+// Your puzzle answer was BFKEGNOVATIHXYZRMCJDLSUPWQ
+string part1(DAG jobsDAG) {
+    string jobOrder;
+    do {
+        auto readyJobs = getReadyJobs(jobsDAG);
+        char first = readyJobs.front();
+        for (auto& [_, deps] : jobsDAG)
+            deps.erase(first);
+        jobOrder.push_back(first);
+        jobsDAG.erase(first);
+    } while (!jobsDAG.empty());
+    return jobOrder;
+}
 
-// Part 2: With 5 workers and 60+ second job durations, how long will it take
+// Part 2
+// With 5 workers and 60+ second job durations, how long will it take
 // to complete all of the jobs?
+// Your puzzle answer was 1020
 int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     bool allWorkersIdle;
     int currentSecond = -1;
@@ -57,20 +75,6 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
         }
     } while (!(jobsDAG.empty() && allWorkersIdle));
     return currentSecond;
-}
-
-// Part 1: In what order should the jobs in your instructions be completed?
-string part1(DAG jobsDAG) {
-    string jobOrder;
-    do {
-        auto readyJobs = getReadyJobs(jobsDAG);
-        char first = readyJobs.front();
-        for (auto& [_, deps] : jobsDAG)
-            deps.erase(first);
-        jobOrder.push_back(first);
-        jobsDAG.erase(first);
-    } while (!jobsDAG.empty());
-    return jobOrder;
 }
 
 // Solve Day 07
