@@ -94,6 +94,7 @@ int main() {
     DAG jobsDAG;
 
     // Parse the job dependencies and build the DAG
+    // e.g. "Step A must be finished before step B can begin."
     for (std::string line; std::getline(std::cin, line);) {
         Job jobA = line[5];
         Job jobB = line[36];
