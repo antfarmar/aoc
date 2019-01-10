@@ -16,15 +16,15 @@ using JobSequence = std::string;
 using JobQueue = std::deque<Job>;
 
 // DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
-// the DAG represents jobs and their dependencies (job)->(jobs to do first)
+// the DAG represents jobs and their dependencies (job)->(jobs to do firstJob)
 // ordered map/set since job ordering ties rely on sorted jobs (chars)
 using DAG = std::map<Job, std::set<Job>>;
 
 // an elf worker data struct (for part 2)
 struct Worker {
-    int timeToFinish{0};
-    bool idle{true};
     Job job{'?'};
+    bool idle{true};
+    int timeToFinish{0};
 };
 
 // Find jobs that have no dependencies in the jobsDAG
@@ -41,14 +41,16 @@ JobQueue getReadyJobs(DAG& jobsDAG) {
 // Your puzzle answer was BFKEGNOVATIHXYZRMCJDLSUPWQ
 JobSequence part1(DAG jobsDAG) {
     JobSequence jobOrder;
+
     do {
-        auto readyJobs = getReadyJobs(jobsDAG);
-        Job first = readyJobs.front();
+        JobQueue readyJobs = getReadyJobs(jobsDAG);
+        Job firstJob = readyJobs.front();
         for (auto& [_, deps] : jobsDAG)
-            deps.erase(first);
-        jobOrder.push_back(first);
-        jobsDAG.erase(first);
+            deps.erase(firstJob);
+        jobOrder.push_back(firstJob);
+        jobsDAG.erase(firstJob);
     } while (!jobsDAG.empty());
+
     return jobOrder;
 }
 
