@@ -35,8 +35,8 @@ int main() {
     };
 
     // Calculate the winning Elf's score according to the game rules
-    std::vector<unsigned long long> players(numPlayers);
-    auto score1{0ULL}, score2{0ULL};
+    std::vector<unsigned int> players(numPlayers);
+    unsigned int score1{0U}, score2{0U};
     auto curPos = circle.begin();
     for (int marble = 1; marble < numMarbles * 100; ++marble) {
         if ((marble % 23) == 0) {
