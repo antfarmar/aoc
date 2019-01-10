@@ -30,8 +30,8 @@ struct Worker {
 // Find jobs that have no dependencies in the jobsDAG
 JobQueue getFreeJobs(DAG& jobsDAG) {
     JobQueue freeJobs;
-    for (auto& [job, deps] : jobsDAG)
-        if (deps.empty())
+    for (auto& [job, depJobs] : jobsDAG)
+        if (depJobs.empty())
             freeJobs.push_back(job);
     return freeJobs;
 }
@@ -45,8 +45,8 @@ JobSequence part1(DAG jobsDAG) {
     while (!jobsDAG.empty()) {
         JobQueue freeJobs = getFreeJobs(jobsDAG);
         Job nextJob = freeJobs.front();
-        for (auto& [_, deps] : jobsDAG)
-            deps.erase(nextJob);
+        for (auto& [_, depJobs] : jobsDAG)
+            depJobs.erase(nextJob);
         jobOrder.push_back(nextJob);
         jobsDAG.erase(nextJob);
     }
@@ -64,14 +64,13 @@ int part2(DAG jobsDAG, const int numWorkers, const int jobDuration) {
     int timeElapsed = -1;
 
     // assign jobs to elves until all jobs done
-    while (not(jobsDAG.empty() and allWorkersIdle)) {
-        timeElapsed++;
+    for (; not(jobsDAG.empty() and allWorkersIdle); timeElapsed++) {
         // has any elf worker completed a job?
         for (Worker& elf : workers) {
             if (not(elf.idle or --elf.timeToFinishJob)) {
                 elf.idle = true;
-                for (auto& [_, deps] : jobsDAG)
-                    deps.erase(elf.job);
+                for (auto& [_, depJobs] : jobsDAG)
+                    depJobs.erase(elf.job);
             }
         }
         // assign jobs to idle elves while still available
@@ -88,7 +87,6 @@ int part2(DAG jobsDAG, const int numWorkers, const int jobDuration) {
             allWorkersIdle &= elf.idle;
         }
     }
-
     return timeElapsed;
 }
 
@@ -108,9 +106,9 @@ int main() {
     }
 
     // Debug printing
-    for (auto& [job, deps] : jobsDAG) {
+    for (auto& [job, depJobs] : jobsDAG) {
         std::cout << job << ": ";
-        for (auto& d : deps)
+        for (auto& d : depJobs)
             std::cout << d << " ";
         std::cout << std::endl;
     }
