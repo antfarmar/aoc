@@ -26,16 +26,21 @@ std::istream& operator>>(std::istream& is, Node& node) {
     return is;
 }
 
+// template <typename T>
+// int sum(const std::vector<T>& v, int init) {
+//     return std::accumulate(v.cbegin(), v.cend(), init);
+// }
+
 // Part 1
 // What is the sum of all metadata entries?
 // Your puzzle answer was 43825
 //
 // Recursively traverse the tree and sum each node's metadata
 int sumMetadata(const Node& node) {
-    int sum = std::accumulate(node.metadata.cbegin(), node.metadata.cend(), 0);
-    for (const Node& child : node.children)
-        sum += sumMetadata(child);
-    return sum;
+    return std::accumulate(
+        node.children.cbegin(), node.children.cend(),
+        std::accumulate(node.metadata.cbegin(), node.metadata.cend(), 0),
+        [](const int& sum, const Node& c) { return sum + sumMetadata(c); });
 }
 
 // Part 2
@@ -47,7 +52,7 @@ int rootValue(const Node& node) {
     int rootSum{0}, off{-1};
     if (node.children.empty())
         return sumMetadata(node);
-    for (const int& idx : node.metadata)  // data = index to child
+    for (const int& idx : node.metadata)  // metadata = index to child
         if (size_t(idx + off) < node.children.size())
             rootSum += rootValue(node.children[idx + off]);
     return rootSum;
