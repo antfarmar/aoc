@@ -10,13 +10,16 @@
 #include <set>
 #include <vector>
 
+// type aliases for convenience and readability
+// DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
+// ordered map/set since job ordering ties rely on sorted chars
 using DAG = std::map<char, std::set<char>>;
 
-// helper struct for part 2
+// an elf worker data struct (for part 2)
 struct Worker {
+    int timeToFinish{0};
     bool idle{true};
     char job{0};
-    int timeToFinish{0};
 };
 
 // Find jobs that have no dependencies in the jobsDAG
