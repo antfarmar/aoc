@@ -13,6 +13,7 @@
 // type aliases for convenience and readability
 using Job = char;
 using JobSequence = std::string;
+using JobQueue = std::deque<Job>;
 
 // DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
 // the DAG represents jobs and their dependencies (job)->(jobs to do first)
@@ -27,8 +28,8 @@ struct Worker {
 };
 
 // Find jobs that have no dependencies in the jobsDAG
-std::deque<Job> getReadyJobs(DAG& jobsDAG) {
-    std::deque<Job> readyJobs;
+JobQueue getReadyJobs(DAG& jobsDAG) {
+    JobQueue readyJobs;
     for (auto& [job, deps] : jobsDAG)
         if (deps.empty())
             readyJobs.push_back(job);
