@@ -93,13 +93,15 @@ int main() {
     // Adj. Edge Map: Job Node -> Dependency Job Nodes Set(ordered)
     DAG jobsDAG;
 
-    // Parse the job dependencies and build the DAG map.
+    // Parse the job dependencies and build the DAG
     for (std::string line; std::getline(std::cin, line);) {
-        Job jobA = line[5], jobB = line[36];
-        jobsDAG[jobA], jobsDAG[jobB].emplace(jobA);
+        Job jobA = line[5];
+        Job jobB = line[36];
+        jobsDAG[jobA];
+        jobsDAG[jobB].emplace(jobA);
     }
 
-    // Debug printing.
+    // Debug printing
     for (auto& [job, deps] : jobsDAG) {
         std::cout << job << ": ";
         for (auto& d : deps)
@@ -107,7 +109,7 @@ int main() {
         std::cout << std::endl;
     }
 
-    // Output solutions.
+    // Output solutions
     std::cout << "Part 1: Job Order = " << part1(jobsDAG)
               << std::endl;  // CABDFE // BFKEGNOVATIHXYZRMCJDLSUPWQ
     std::cout << "Part 2: Duration  = " << part2(jobsDAG, 5, 60)
