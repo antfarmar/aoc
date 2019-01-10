@@ -66,23 +66,23 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     while (not(jobsDAG.empty() and allWorkersIdle)) {
         timeElapsed++;
         allWorkersIdle = true;
-        for (Worker& w : workers) {
-            if (not(w.idle or --w.timeToFinishJob)) {
-                w.idle = true;
+        for (Worker& elf : workers) {
+            if (not(elf.idle or --elf.timeToFinishJob)) {
+                elf.idle = true;
                 for (auto& [_, deps] : jobsDAG)
-                    deps.erase(w.job);
+                    deps.erase(elf.job);
             }
         }
         JobQueue readyJobs = getReadyJobs(jobsDAG);
-        for (Worker& w : workers) {
-            if (w.idle and not readyJobs.empty()) {
-                w.idle = false;
-                w.job = readyJobs.front();
-                w.timeToFinishJob = extraTime + int(w.job - 'A') + 1;
+        for (Worker& elf : workers) {
+            if (elf.idle and not readyJobs.empty()) {
+                elf.idle = false;
+                elf.job = readyJobs.front();
+                elf.timeToFinishJob = extraTime + int(elf.job - 'A') + 1;
                 readyJobs.pop_front();
-                jobsDAG.erase(w.job);
+                jobsDAG.erase(elf.job);
             }
-            allWorkersIdle &= w.idle;
+            allWorkersIdle &= elf.idle;
         }
     }
 
