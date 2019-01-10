@@ -35,14 +35,14 @@ int main() {
         return (itr == circle.end()) ? circle.begin() : itr;
     };
 
+    // Calculate the winning Elf's score according to the game rules
     std::vector<unsigned long long> players(numPlayers);
-    // Calculate the winning Elf's score according to the game rules.
     auto score1{0ULL}, score2{0ULL};
     auto curPos = circle.begin();
     for (int marble = 1; marble < numMarbles * 100; ++marble) {
-        if (marble % 23 == 0) {
+        if ((marble % 23) == 0) {
             curPos = iterate(curPos, -7);
-            players[marble % numPlayers] += *curPos + marble;
+            players[marble % numPlayers] += (*curPos + marble);
             curPos = erase(curPos);
         } else
             curPos = circle.insert(iterate(curPos, 2), marble);
