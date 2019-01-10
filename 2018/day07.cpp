@@ -66,6 +66,7 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     while (not(jobsDAG.empty() and allWorkersIdle)) {
         timeElapsed++;
         allWorkersIdle = true;
+        // has any elf worker completed a job?
         for (Worker& elf : workers) {
             if (not(elf.idle or --elf.timeToFinishJob)) {
                 elf.idle = true;
@@ -73,6 +74,7 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
                     deps.erase(elf.job);
             }
         }
+        // assign jobs to idle elves while available
         JobQueue readyJobs = getReadyJobs(jobsDAG);
         for (Worker& elf : workers) {
             if (elf.idle and not readyJobs.empty()) {
