@@ -65,15 +65,15 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     do {
         currentSecond++;
         allWorkersIdle = true;
-        for (auto& w : workers) {
+        for (Worker& w : workers) {
             if (!(w.idle || --w.timeToFinish)) {
                 w.idle = true;
                 for (auto& [_, deps] : jobsDAG)
                     deps.erase(w.job);
             }
         }
-        auto readyJobs = getReadyJobs(jobsDAG);
-        for (auto& w : workers) {
+        JobQueue readyJobs = getReadyJobs(jobsDAG);
+        for (Worker& w : workers) {
             if (w.idle && !readyJobs.empty()) {
                 w.idle = false;
                 w.job = readyJobs.front();
