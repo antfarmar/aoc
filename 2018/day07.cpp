@@ -1,11 +1,7 @@
 // Advent of Code 2018
 // Day 7: The Sum of Its Parts
-// #include <regex>
-// #include <numeric>
-// #include <array>
-// #include <unordered_set>
-// #include <unordered_map>
-// #include <string>
+// https://adventofcode.com/2018/day/7
+
 #include <algorithm>
 #include <deque>
 #include <iostream>
@@ -17,9 +13,9 @@ using namespace std;
 typedef map<char, set<char>> DAG;
 
 // Find jobs that have no dependencies in the jobsDAG.
-deque<char> getReadyJobs(DAG &jobsDAG) {
+deque<char> getReadyJobs(DAG& jobsDAG) {
     deque<char> readyJobs;
-    for (auto &[job, deps] : jobsDAG)
+    for (auto& [job, deps] : jobsDAG)
         if (deps.empty())
             readyJobs.push_back(job);
     return readyJobs;
@@ -41,15 +37,15 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     do {
         currentSecond++;
         allWorkersIdle = true;
-        for (auto &w : workers) {
+        for (auto& w : workers) {
             if (!(w.idle || --w.timeToFinish)) {
                 w.idle = true;
-                for (auto &[_, deps] : jobsDAG)
+                for (auto& [_, deps] : jobsDAG)
                     deps.erase(w.job);
             }
         }
         auto readyJobs = getReadyJobs(jobsDAG);
-        for (auto &w : workers) {
+        for (auto& w : workers) {
             if (w.idle && !readyJobs.empty()) {
                 w.idle = false;
                 w.job = readyJobs.front();
@@ -69,7 +65,7 @@ string part1(DAG jobsDAG) {
     do {
         auto readyJobs = getReadyJobs(jobsDAG);
         char first = readyJobs.front();
-        for (auto &[_, deps] : jobsDAG)
+        for (auto& [_, deps] : jobsDAG)
             deps.erase(first);
         jobOrder.push_back(first);
         jobsDAG.erase(first);
@@ -90,16 +86,16 @@ int main() {
     }
 
     // Debug printing.
-    for (auto &[job, deps] : jobsDAG) {
+    for (auto& [job, deps] : jobsDAG) {
         cout << job << ": ";
-        for (auto &d : deps)
+        for (auto& d : deps)
             cout << d << " ";
         cout << endl;
     }
 
     // Output solutions.
-    cout << "[Part 1] Job Order = " << part1(jobsDAG)
-         << endl; // CABDFE // BFKEGNOVATIHXYZRMCJDLSUPWQ
-    cout << "[Part 2] Duration   = " << part2(jobsDAG, 5, 60)
-         << endl; // 15 // 1020
+    cout << "Part 1: Job Order = " << part1(jobsDAG)
+         << endl;  // CABDFE // BFKEGNOVATIHXYZRMCJDLSUPWQ
+    cout << "Part 2: Duration  = " << part2(jobsDAG, 5, 60)
+         << endl;  // 15 // 1020
 }
