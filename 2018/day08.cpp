@@ -19,9 +19,9 @@ std::istream& operator>>(std::istream& is, Node& node) {
     is >> childCnt >> metadataCnt;
     node.children.resize(childCnt);
     node.metadata.resize(metadataCnt);
-    for (auto& child : node.children)
+    for (Node& child : node.children)
         is >> child;
-    for (auto& data : node.metadata)
+    for (int& data : node.metadata)
         is >> data;
     return is;
 }
@@ -33,7 +33,7 @@ std::istream& operator>>(std::istream& is, Node& node) {
 // Recursively traverse the tree and sum each node's metadata
 int sumMetadata(const Node& node) {
     int sum = std::accumulate(node.metadata.cbegin(), node.metadata.cend(), 0);
-    for (auto& child : node.children)
+    for (const Node& child : node.children)
         sum += sumMetadata(child);
     return sum;
 }
@@ -47,7 +47,7 @@ int rootValue(const Node& node) {
     int rootSum{0}, off{-1};
     if (node.children.empty())
         return sumMetadata(node);
-    for (auto& idx : node.metadata)  // data = index to child
+    for (const int& idx : node.metadata)  // data = index to child
         if (size_t(idx + off) < node.children.size())
             rootSum += rootValue(node.children[idx + off]);
     return rootSum;
