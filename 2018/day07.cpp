@@ -10,7 +10,7 @@
 #include <set>
 #include <vector>
 using namespace std;
-typedef map<char, set<char>> DAG;
+using DAG = map<char, set<char>>;
 
 // Find jobs that have no dependencies in the jobsDAG.
 deque<char> getReadyJobs(DAG& jobsDAG) {
