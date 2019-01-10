@@ -60,10 +60,10 @@ JobSequence part1(DAG jobsDAG) {
 // Your puzzle answer was 1020
 int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     std::vector<Worker> workers(numWorkers);
-    bool allWorkersIdle;
+    bool allWorkersIdle = false;
     int timeElapsed = -1;
 
-    do {
+    while (not(jobsDAG.empty() and allWorkersIdle)) {
         timeElapsed++;
         allWorkersIdle = true;
         for (Worker& w : workers) {
@@ -84,7 +84,7 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
             }
             allWorkersIdle &= w.idle;
         }
-    } while (not(jobsDAG.empty() and allWorkersIdle));
+    }
 
     return timeElapsed;
 }
