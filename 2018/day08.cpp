@@ -47,6 +47,10 @@ int sumMetadata(const Node& node) {
 // What is the value of the root node?
 // Your puzzle answer was 19276
 //
+// The value of a node depends on whether it has child nodes
+// If a node has no child nodes, its value is the sum of its metadata entries
+// If a node does have child nodes, the metadata entries become indexes to them
+//
 // Recursively traverse the tree, sum each node's metadata + children
 int rootValue(const Node& node) {
     int rootSum = 0;
