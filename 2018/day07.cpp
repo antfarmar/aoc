@@ -11,20 +11,23 @@
 #include <vector>
 
 // type aliases for convenience and readability
+using Job = char;
+
 // DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
-// ordered map/set since job ordering ties rely on sorted chars
-using DAG = std::map<char, std::set<char>>;
+// the DAG represents jobs and their dependencies (job)->(jobs to do first)
+// ordered map/set since job ordering ties rely on sorted jobs (chars)
+using DAG = std::map<Job, std::set<Job>>;
 
 // an elf worker data struct (for part 2)
 struct Worker {
     int timeToFinish{0};
     bool idle{true};
-    char job{0};
+    Job job{'?'};
 };
 
 // Find jobs that have no dependencies in the jobsDAG
-std::deque<char> getReadyJobs(DAG& jobsDAG) {
-    std::deque<char> readyJobs;
+std::deque<Job> getReadyJobs(DAG& jobsDAG) {
+    std::deque<Job> readyJobs;
     for (auto& [job, deps] : jobsDAG)
         if (deps.empty())
             readyJobs.push_back(job);
@@ -38,7 +41,7 @@ std::string part1(DAG jobsDAG) {
     std::string jobOrder;
     do {
         auto readyJobs = getReadyJobs(jobsDAG);
-        char first = readyJobs.front();
+        Job first = readyJobs.front();
         for (auto& [_, deps] : jobsDAG)
             deps.erase(first);
         jobOrder.push_back(first);
@@ -88,7 +91,7 @@ int main() {
 
     // Parse the job dependencies and build the DAG map.
     for (std::string line; std::getline(std::cin, line);) {
-        char jobA = line[5], jobB = line[36];
+        Job jobA = line[5], jobB = line[36];
         jobsDAG[jobA], jobsDAG[jobB].emplace(jobA);
     }
 
