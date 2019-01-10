@@ -28,12 +28,12 @@ struct Worker {
 };
 
 // Find jobs that have no dependencies in the jobsDAG
-JobQueue getReadyJobs(DAG& jobsDAG) {
-    JobQueue readyJobs;
+JobQueue getFreeJobs(DAG& jobsDAG) {
+    JobQueue freeJobs;
     for (auto& [job, deps] : jobsDAG)
         if (deps.empty())
-            readyJobs.push_back(job);
-    return readyJobs;
+            freeJobs.push_back(job);
+    return freeJobs;
 }
 
 // Part 1
@@ -43,8 +43,8 @@ JobSequence part1(DAG jobsDAG) {
     JobSequence jobOrder;
 
     while (!jobsDAG.empty()) {
-        JobQueue readyJobs = getReadyJobs(jobsDAG);
-        Job nextJob = readyJobs.front();
+        JobQueue freeJobs = getFreeJobs(jobsDAG);
+        Job nextJob = freeJobs.front();
         for (auto& [_, deps] : jobsDAG)
             deps.erase(nextJob);
         jobOrder.push_back(nextJob);
@@ -65,7 +65,6 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
 
     while (not(jobsDAG.empty() and allWorkersIdle)) {
         timeElapsed++;
-        allWorkersIdle = true;
         // has any elf worker completed a job?
         for (Worker& elf : workers) {
             if (not(elf.idle or --elf.timeToFinishJob)) {
@@ -75,13 +74,14 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
             }
         }
         // assign jobs to idle elves while available
-        JobQueue readyJobs = getReadyJobs(jobsDAG);
+        JobQueue freeJobs = getFreeJobs(jobsDAG);
+        allWorkersIdle = true;
         for (Worker& elf : workers) {
-            if (elf.idle and not readyJobs.empty()) {
+            if (elf.idle and not freeJobs.empty()) {
                 elf.idle = false;
-                elf.job = readyJobs.front();
+                elf.job = freeJobs.front();
                 elf.timeToFinishJob = extraTime + int(elf.job - 'A') + 1;
-                readyJobs.pop_front();
+                freeJobs.pop_front();
                 jobsDAG.erase(elf.job);
             }
             allWorkersIdle &= elf.idle;
