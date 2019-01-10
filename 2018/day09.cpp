@@ -19,20 +19,19 @@ int main() {
     circle.push_back(0);
 
     // Circular list iteration functions using lambdas.
-    auto prev = [&](auto itr) {
-        return (itr == circle.begin()) ? (itr = circle.end(), --itr) : --itr;
+    auto prev = [&](auto& it) {
+        it = (it == circle.begin()) ? std::prev(circle.end()) : std::prev(it);
     };
-    auto next = [&](auto itr) {
-        return (++itr == circle.end()) ? circle.begin() : itr;
+    auto next = [&](auto& it) {
+        it = (++it == circle.end()) ? circle.begin() : it;
     };
-    auto iterate = [&](auto itr, int dst) {
+    auto iterate = [&](auto& it, int dst) {
         while (dst)
-            (dst < 0) ? (itr = prev(itr), ++dst) : (itr = next(itr), --dst);
-        return itr;
+            (dst < 0) ? (prev(it), ++dst) : (next(it), --dst);
     };
-    auto erase = [&](auto itr) {
-        itr = circle.erase(itr);
-        return (itr == circle.end()) ? circle.begin() : itr;
+    auto erase = [&](auto& it) {
+        it = circle.erase(it);
+        it = (it == circle.end()) ? circle.begin() : it;
     };
 
     // Calculate the winning Elf's score according to the game rules
@@ -41,11 +40,13 @@ int main() {
     auto curPos = circle.begin();
     for (int marble = 1; marble < numMarbles * 100; ++marble) {
         if ((marble % 23) == 0) {
-            curPos = iterate(curPos, -7);
+            iterate(curPos, -7);
             players[marble % numPlayers] += (*curPos + marble);
-            curPos = erase(curPos);
-        } else
-            curPos = circle.insert(iterate(curPos, 2), marble);
+            erase(curPos);
+        } else {
+            iterate(curPos, 2);
+            curPos = circle.insert(curPos, marble);
+        }
         if (marble == numMarbles)  // Part 1
             score1 = *std::max_element(players.begin(), players.end());
     }
