@@ -9,8 +9,8 @@
 #include <map>
 #include <set>
 #include <vector>
-using namespace std;
-using DAG = map<char, set<char>>;
+
+using DAG = std::map<char, std::set<char>>;
 
 // helper struct for part 2
 struct Worker {
@@ -20,8 +20,8 @@ struct Worker {
 };
 
 // Find jobs that have no dependencies in the jobsDAG
-deque<char> getReadyJobs(DAG& jobsDAG) {
-    deque<char> readyJobs;
+std::deque<char> getReadyJobs(DAG& jobsDAG) {
+    std::deque<char> readyJobs;
     for (auto& [job, deps] : jobsDAG)
         if (deps.empty())
             readyJobs.push_back(job);
@@ -31,8 +31,8 @@ deque<char> getReadyJobs(DAG& jobsDAG) {
 // Part 1
 // In what order should the jobs in your instructions be completed?
 // Your puzzle answer was BFKEGNOVATIHXYZRMCJDLSUPWQ
-string part1(DAG jobsDAG) {
-    string jobOrder;
+std::string part1(DAG jobsDAG) {
+    std::string jobOrder;
     do {
         auto readyJobs = getReadyJobs(jobsDAG);
         char first = readyJobs.front();
@@ -51,7 +51,7 @@ string part1(DAG jobsDAG) {
 int part2(DAG jobsDAG, int numWorkers, int extraTime) {
     bool allWorkersIdle;
     int currentSecond = -1;
-    vector<Worker> workers(numWorkers);
+    std::vector<Worker> workers(numWorkers);
     do {
         currentSecond++;
         allWorkersIdle = true;
@@ -84,22 +84,22 @@ int main() {
     DAG jobsDAG;
 
     // Parse the job dependencies and build the DAG map.
-    for (string line; getline(cin, line);) {
+    for (std::string line; std::getline(std::cin, line);) {
         char jobA = line[5], jobB = line[36];
         jobsDAG[jobA], jobsDAG[jobB].emplace(jobA);
     }
 
     // Debug printing.
     for (auto& [job, deps] : jobsDAG) {
-        cout << job << ": ";
+        std::cout << job << ": ";
         for (auto& d : deps)
-            cout << d << " ";
-        cout << endl;
+            std::cout << d << " ";
+        std::cout << std::endl;
     }
 
     // Output solutions.
-    cout << "Part 1: Job Order = " << part1(jobsDAG)
-         << endl;  // CABDFE // BFKEGNOVATIHXYZRMCJDLSUPWQ
-    cout << "Part 2: Duration  = " << part2(jobsDAG, 5, 60)
-         << endl;  // 15 // 1020
+    std::cout << "Part 1: Job Order = " << part1(jobsDAG)
+              << std::endl;  // CABDFE // BFKEGNOVATIHXYZRMCJDLSUPWQ
+    std::cout << "Part 2: Duration  = " << part2(jobsDAG, 5, 60)
+              << std::endl;  // 15 // 1020
 }
