@@ -10,8 +10,9 @@
 
 int main() {
     int numPlayers{10}, numMarbles{1618};
-    scanf("%d players; last marble is worth %d points", &numPlayers,
-          &numMarbles);
+    std::string line{std::istream_iterator<char>(std::cin), {}};
+    const char format[] = "%d players; last marble is worth %d points";
+    sscanf(line.c_str(), format, &numPlayers, &numMarbles);
 
     // The marble circle: linked list.
     std::list<int> circle;
