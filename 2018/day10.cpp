@@ -23,10 +23,8 @@ struct Star {
     }
 
     // For minmax comparisons.
-    bool operator<(Star const& rs) const {
-        if (py != rs.py)
-            return py < rs.py;
-        return px < rs.px;
+    bool operator<(Star const& rhs) const {
+        return tie(px, py) < tie(rhs.px, rhs.py);
     }
 
     // Parse input via std::cin >>.
@@ -82,7 +80,7 @@ void solve() {
     // Update/converge star positions until they diverge again.
     int delta = 1e9;
     int prevDelta = delta + 1;
-    int iterations = -1;
+    int iterations = 0;
     const int threshold = 10;
     for (; delta < prevDelta; iterations++) {
         for_each(stars.begin(), stars.end(), [](Star& s) { s.update(); });
