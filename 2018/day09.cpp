@@ -1,20 +1,12 @@
 // Advent of Code 2018
 // Day 9: Marble Mania
-// #include <regex>
-// #include <numeric>
-// #include <unordered_set>
-// #include <unordered_map>
-// #include <set>
-// #include <map>
-// #include <string>
-// #include <deque>
-// #include <array>
+// https://adventofcode.com/2018/day/9
+
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <list>
 #include <vector>
-// using namespace std;
 
 int main() {
     int numPlayers{10}, numMarbles{1618};
@@ -53,10 +45,10 @@ int main() {
             curPos = erase(curPos);
         } else
             curPos = circle.insert(iterate(curPos, 2), marble);
-        if (marble == numMarbles) // Part 1
+        if (marble == numMarbles)  // Part 1
             score1 = *std::max_element(players.begin(), players.end());
     }
-    score2 = *std::max_element(players.begin(), players.end()); // Part 2
+    score2 = *std::max_element(players.begin(), players.end());  // Part 2
 
     // Part 1: What is the winning Elf's score? // 439635
     std::cout << "[Part 1] "
