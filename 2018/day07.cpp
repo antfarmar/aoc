@@ -24,7 +24,7 @@ using DAG = std::map<Job, std::set<Job>>;
 struct Worker {
     Job job{'?'};
     bool idle{true};
-    int timeToFinish{0};
+    int timeToFinishJob{0};
 };
 
 // Find jobs that have no dependencies in the jobsDAG
@@ -59,14 +59,15 @@ JobSequence part1(DAG jobsDAG) {
 // to complete all of the jobs?
 // Your puzzle answer was 1020
 int part2(DAG jobsDAG, int numWorkers, int extraTime) {
-    bool allWorkersIdle;
-    int currentSecond = -1;
     std::vector<Worker> workers(numWorkers);
+    bool allWorkersIdle;
+    int timeElapsed = -1;
+
     do {
-        currentSecond++;
+        timeElapsed++;
         allWorkersIdle = true;
         for (Worker& w : workers) {
-            if (!(w.idle || --w.timeToFinish)) {
+            if (not(w.idle or --w.timeToFinishJob)) {
                 w.idle = true;
                 for (auto& [_, deps] : jobsDAG)
                     deps.erase(w.job);
@@ -74,17 +75,18 @@ int part2(DAG jobsDAG, int numWorkers, int extraTime) {
         }
         JobQueue readyJobs = getReadyJobs(jobsDAG);
         for (Worker& w : workers) {
-            if (w.idle && !readyJobs.empty()) {
+            if (w.idle and not readyJobs.empty()) {
                 w.idle = false;
                 w.job = readyJobs.front();
-                w.timeToFinish = extraTime + int(w.job - 'A') + 1;
+                w.timeToFinishJob = extraTime + int(w.job - 'A') + 1;
                 readyJobs.pop_front();
                 jobsDAG.erase(w.job);
             }
             allWorkersIdle &= w.idle;
         }
-    } while (!(jobsDAG.empty() && allWorkersIdle));
-    return currentSecond;
+    } while (not(jobsDAG.empty() and allWorkersIdle));
+
+    return timeElapsed;
 }
 
 // Solve Day 07
