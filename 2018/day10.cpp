@@ -24,7 +24,7 @@ struct Star {
 
     // For minmax comparisons.
     bool operator<(Star const& rhs) const {
-        return tie(px, py) < tie(rhs.px, rhs.py);
+        return tie(py, px) < tie(rhs.py, rhs.px);
     }
 
     // Parse input via std::cin >>.
@@ -80,15 +80,15 @@ void solve() {
     // Update/converge star positions until they diverge again.
     int delta = 1e9;
     int prevDelta = delta + 1;
-    int iterations = 0;
+    int iterations = -1;
     const int threshold = 10;
     for (; delta < prevDelta; iterations++) {
         for_each(stars.begin(), stars.end(), [](Star& s) { s.update(); });
         auto [minStar, maxStar] = minmax_element(stars.begin(), stars.end());
         // tie(minStar, maxStar) = minmax_element(stars.begin(), stars.end());
         prevDelta = delta;
-        delta = maxStar->py - minStar->py;
-        if (delta <= threshold)  // print when stars are near each other
+        delta = (maxStar->py - minStar->py);
+        if (delta < threshold)  // print when stars are near each other
             cout << drawStarmap(*minStar, *maxStar, stars);
     }
 
