@@ -49,12 +49,12 @@ int sumMetadata(const Node& node) {
 //
 // Recursively traverse the tree, sum each node's metadata + children
 int rootValue(const Node& node) {
-    int rootSum{0}, off{-1};
+    int rootSum = 0;
     if (node.children.empty())
         return sumMetadata(node);
     for (const int& idx : node.metadata)  // metadata = index to child
-        if (size_t(idx + off) < node.children.size())
-            rootSum += rootValue(node.children[idx + off]);
+        if (size_t(idx - 1) < node.children.size())
+            rootSum += rootValue(node.children[idx - 1]);
     return rootSum;
 }
 
