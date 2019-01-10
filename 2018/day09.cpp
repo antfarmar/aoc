@@ -9,16 +9,16 @@
 #include <vector>
 
 int main() {
-    int numPlayers{10}, numMarbles{1618};
+    int numPlayers{10}, numMarbles{1618};  // initialized to 1st example
     std::string line{std::istream_iterator<char>(std::cin), {}};
     const char format[] = "%d players; last marble is worth %d points";
     sscanf(line.c_str(), format, &numPlayers, &numMarbles);
 
-    // The marble circle: linked list.
+    // The marble circle: a linked list
     std::list<int> circle;
     circle.push_back(0);
 
-    // Circular list iteration functions using lambdas.
+    // Circular list iteration lambda functions
     auto prev = [&](auto& it) {
         it = (it == circle.begin()) ? std::prev(circle.end()) : std::prev(it);
     };
@@ -35,10 +35,11 @@ int main() {
     };
 
     // Calculate the winning Elf's score according to the game rules
+    // (unsigned int max = 4'294'967'295)
     std::vector<unsigned int> players(numPlayers);
     unsigned int score1{0U}, score2{0U};
     auto curPos = circle.begin();
-    for (int marble = 1; marble < numMarbles * 100; ++marble) {
+    for (int marble = 1; marble < (numMarbles * 100); ++marble) {
         if ((marble % 23) == 0) {
             iterate(curPos, -7);
             players[marble % numPlayers] += (*curPos + marble);
@@ -63,7 +64,7 @@ int main() {
               << " Elf's Score = " << score2 << "\n";
 }
 
-// Circular iterator.
+// Circular iterator
 /* void rotate_iterator(std::list<uint32_t> &circle,
                      std::list<uint32_t>::iterator &itr, int n) {
     if (n > 0) {
