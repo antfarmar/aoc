@@ -11,23 +11,23 @@
 #include <vector>
 using namespace std;
 
-// Helper struct
+// star data struct
 struct Star {
     int px{0}, py{0};  // position
     int vx{0}, vy{0};  // velocity
 
-    // Translate star position by velocity.
+    // translate star position by velocity
     void update() {
         px += vx;
         py += vy;
     }
 
-    // For minmax comparisons.
+    // for minmax comparisons
     bool operator<(Star const& rhs) const {
         return tie(py, px) < tie(rhs.py, rhs.px);
     }
 
-    // Parse input via std::cin >>.
+    // parse input via >>
     friend std::istream& operator>>(std::istream& is, Star& s) {
         // e.g. position=<-9,  1> velocity=< 0,  2>
         int ig = 99;
@@ -41,19 +41,19 @@ struct Star {
     }
 };
 
-// Parse input via sscanf.
-vector<Star> readInput() {
-    vector<Star> vs;
-    char form[] = "position=<%d,%d> velocity=<%d,%d>";
-    for (string line; getline(cin, line);) {
-        Star s;
-        sscanf(line.c_str(), form, &s.px, &s.py, &s.vx, &s.vy);
-        vs.push_back(s);
-    }
-    return vs;
-}
+// parse input via sscanf
+// vector<Star> readInput() {
+//     vector<Star> vs;
+//     char form[] = "position=<%d,%d> velocity=<%d,%d>";
+//     for (string line; getline(cin, line);) {
+//         Star s;
+//         sscanf(line.c_str(), form, &s.px, &s.py, &s.vx, &s.vy);
+//         vs.push_back(s);
+//     }
+//     return vs;
+// }
 
-// Draw the stars: loop through the sky grid and stars.
+// Draw the stars: loop through the bounded sky and stars
 string drawStarmap(Star& minStar, Star& maxStar, vector<Star>& stars) {
     string starmap;
     for (int y = minStar.py; y <= maxStar.py; y++) {
@@ -72,12 +72,11 @@ string drawStarmap(Star& minStar, Star& maxStar, vector<Star>& stars) {
     return starmap;
 }
 
-// Solve the challenge. Optimization of star distances: minimize.
+// Solve the challenge: Optimization of star distances (minimize them)
 void solve() {
-    // vector<Star> stars = readInput();
     vector<Star> stars{istream_iterator<Star>{cin}, {}};
 
-    // Update/converge star positions until they diverge again.
+    // Update/converge star positions until they diverge again
     int delta = 1e9;
     int prevDelta = delta + 1;
     int iterations = -1;
@@ -99,7 +98,7 @@ void solve() {
     cout << "[Part 2] = " << iterations << endl;  // 10659
 }
 
-// Main: Time the solver.
+// main: time the solver
 int main() {
     auto start_time = std::chrono::high_resolution_clock::now();
     solve();
