@@ -13,7 +13,7 @@ struct Node {
     std::vector<int> metadata;
 };
 
-// Recursively parse the input tree nodes starting at the root.
+// Recursively parse the input tree nodes starting at the root
 std::istream& operator>>(std::istream& is, Node& node) {
     int childCnt, metadataCnt;
     is >> childCnt >> metadataCnt;
@@ -26,7 +26,11 @@ std::istream& operator>>(std::istream& is, Node& node) {
     return is;
 }
 
-// part 1: Recursively traverse the tree and sum each node's metadata.
+// Part 1
+// What is the sum of all metadata entries?
+// Your puzzle answer was 43825
+//
+// Recursively traverse the tree and sum each node's metadata
 int sumMetadata(const Node& node) {
     int sum = std::accumulate(node.metadata.begin(), node.metadata.end(), 0);
     for (auto& child : node.children)
@@ -34,7 +38,11 @@ int sumMetadata(const Node& node) {
     return sum;
 }
 
-// Part 2: Recursively traverse the tree, sum each node's metadata + children.
+// Part 2
+// What is the value of the root node?
+// Your puzzle answer was 19276
+//
+// Recursively traverse the tree, sum each node's metadata + children
 int rootValue(const Node& node) {
     int rootSum{0}, off{-1};
     if (node.children.empty())
