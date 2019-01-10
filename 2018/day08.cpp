@@ -32,7 +32,7 @@ std::istream& operator>>(std::istream& is, Node& node) {
 //
 // Recursively traverse the tree and sum each node's metadata
 int sumMetadata(const Node& node) {
-    int sum = std::accumulate(node.metadata.begin(), node.metadata.end(), 0);
+    int sum = std::accumulate(node.metadata.cbegin(), node.metadata.cend(), 0);
     for (auto& child : node.children)
         sum += sumMetadata(child);
     return sum;
