@@ -12,6 +12,7 @@
 
 // type aliases for convenience and readability
 using Job = char;
+using JobSequence = std::string;
 
 // DAG: directed acyclic graph (map (node) -> set (adjaceny edges))
 // the DAG represents jobs and their dependencies (job)->(jobs to do first)
@@ -37,8 +38,8 @@ std::deque<Job> getReadyJobs(DAG& jobsDAG) {
 // Part 1
 // In what order should the jobs in your instructions be completed?
 // Your puzzle answer was BFKEGNOVATIHXYZRMCJDLSUPWQ
-std::string part1(DAG jobsDAG) {
-    std::string jobOrder;
+JobSequence part1(DAG jobsDAG) {
+    JobSequence jobOrder;
     do {
         auto readyJobs = getReadyJobs(jobsDAG);
         Job first = readyJobs.front();
