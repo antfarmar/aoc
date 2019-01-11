@@ -16,14 +16,14 @@ const int dy[] = {1, 0, -1, 0};   // y velocities
 
 // Helper struct.
 struct Cart {
-    int x, y;     // x,y location in track grid. (0,0) is top left
+    int x, y;     // (x,y) location in track grid. (0,0) is top-left
     int dir, dd;  // direction (idx into dx,dy) and delta (for intersections)
     bool crash;   // did this cart crash?
 
     // Constructor.
     Cart(int x, int y, int d) : x(x), y(y), dir(d), dd(1), crash(false) {}
 
-    // For sorting.
+    // For sorting: lexicographic pairwise reading order
     // The furthest left column is X=0 and the furthest top row is Y=0.
     bool operator<(const Cart& other) {
         return make_pair(y, x) < make_pair(other.y, other.x);
@@ -39,10 +39,10 @@ struct Cart {
         // the third time, and then repeats those directions again.
         char track = trackGrid[y][x];
         switch (track) {
-            case '\\':  // up(2)->left(3), right(1)->down(0)
+            case '\\':  // up(2) <-> left(3), down(0) <-> right(1)
                 dir ^= 1;
                 break;
-            case '/':  // up(2)->right(1), left(3)->down(0)
+            case '/':  // up(2) <-> right(1), down(0) <-> left(3)
                 dir = ((dir + 2) ^ 1) & 3;
                 break;
             case '+':  // 4-way intersection
@@ -55,8 +55,8 @@ struct Cart {
         // crash and we update them accordingly, informing the caller.
         bool moveOK = true;
         for (Cart& c : carts)
-            if (c.x == x && c.y == y && &c != this)
-                crash = true, c.crash = true, moveOK = false;
+            if ((x == c.x) && (y == c.y) && (this != &c))
+                crash = c.crash = true, moveOK = false;
 
         return moveOK;
     }
