@@ -9,14 +9,15 @@ using namespace std;
 // O(n^2) using 2D partial sums in a Summed-Area Table.
 // https://en.wikipedia.org/wiki/Summed-area_table
 void solve() {
-    int grid[301][301];                       // the summmed-area table
+    const int SIZE = 301;
+    int grid[SIZE][SIZE];                     // the summmed-area table
     int gridSerial = 9110;                    // given input
     int bestX, bestY, bestSize, best = -1e9;  // memo variables
     int best3X, best3Y;                       // part 1 answer
 
     // Build the 300x300 summed-area table using fuel cell power levels.
-    for (int y = 1; y <= 300; y++)
-        for (int x = 1; x <= 300; x++) {
+    for (int y = 1; y < SIZE; y++)
+        for (int x = 1; x < SIZE; x++) {
             int rackID = x + 10;
             int powerLevel = rackID * y + gridSerial;
             powerLevel = ((powerLevel * rackID / 100) % 10) - 5;
@@ -26,9 +27,9 @@ void solve() {
 
     // Find the largest total power of all square sizes using the summed-area
     // table of fuel cell power level sums.
-    for (int s = 1; s <= 300; s++)
-        for (int y = s; y <= 300; y++)
-            for (int x = s; x <= 300; x++) {
+    for (int s = 1; s < SIZE; s++)
+        for (int y = s; y < SIZE; y++)
+            for (int x = s; x < SIZE; x++) {
                 int totalPower = grid[y][x] - grid[y - s][x] - grid[y][x - s] +
                                  grid[y - s][x - s];
                 if (totalPower > best) {
