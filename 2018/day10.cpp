@@ -27,8 +27,8 @@ struct Star {
     }
 
     // parse input via >>
+    // e.g. position=<-9,  1> velocity=< 0,  2>
     friend std::istream& operator>>(std::istream& is, Star& s) {
-        // e.g. position=<-9,  1> velocity=< 0,  2>
         int ig = 99;
         char c;
         cin.ignore(ig, '<');
