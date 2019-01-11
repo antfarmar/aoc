@@ -20,7 +20,7 @@ void solve() {
     for (int y = 1; y < SIZE; y++)
         for (int x = 1; x < SIZE; x++) {
             int rackID = x + 10;
-            int powerLevel = rackID * y + gridSerial;
+            int powerLevel = y * rackID + gridSerial;
             powerLevel = ((powerLevel * rackID / 100) % 10) - 5;
             grid[y][x] = powerLevel + grid[y - 1][x] + grid[y][x - 1] -
                          grid[y - 1][x - 1];
