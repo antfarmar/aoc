@@ -8,14 +8,14 @@ using namespace std;
 
 // Straightforward scoreboard vector implementation.
 void solve() {
-    size_t elf0{0}, elf1{1};   // elf bakers/index into recipe scoreboard
-    uint32_t scoreCnt{554401}; // input: number of recipes
-    vector<uint8_t> targetScores{5, 5, 4, 4, 0, 1}; // target score sequence
-    vector<uint8_t> scoreboard{3, 7};               // elf recipe scoreboard
+    size_t elf0{0}, elf1{1};    // elf bakers/index into recipe scoreboard
+    uint32_t scoreCnt{554401};  // input: number of recipes
+    vector<uint8_t> targetScores{5, 5, 4, 4, 0, 1};  // target score sequence
+    vector<uint8_t> scoreboard{3, 7};                // elf recipe scoreboard
 
     // Parse the input: number of recipes. Digits are target score sequence.
     cin >> scoreCnt, targetScores.clear();
-    for (char &c : to_string(scoreCnt))
+    for (char& c : to_string(scoreCnt))
         targetScores.push_back(uint8_t(c - '0'));
 
     // Writes a score digit to the board and checks for a target sequence match.
@@ -38,7 +38,7 @@ void solve() {
     // number of recipes in your puzzle input? // 3610281143
     cout << "[Part 01] = ";
     for_each(scoreboard.begin() + scoreCnt, scoreboard.begin() + scoreCnt + 10,
-             [](uint8_t &score) { cout << uint16_t(score); });
+             [](uint8_t& score) { cout << uint16_t(score); });
     cout << endl;
 
     // Part 2: How many recipes appear on the scoreboard to the left of the
