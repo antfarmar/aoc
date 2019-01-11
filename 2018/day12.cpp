@@ -72,7 +72,7 @@ void solve() {
         bitset<initSize> draw;
         for (int loc = *minLoc; loc < initSize - *minLoc; loc++)
             draw[loc - *minLoc] = plants.count(loc);
-        cerr << draw.to_string('-', 'O');
+        cerr << draw.to_string('.', '#');
 
         // Apply the evolution rules.
         newPlants.clear();        // clear previous generation
