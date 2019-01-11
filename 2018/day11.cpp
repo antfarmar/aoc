@@ -35,7 +35,7 @@ void solve() {
                                  grid[y - s][x - s];
                 if (totalPower > best) {
                     best = totalPower, bestX = x, bestY = y, bestSize = s;
-                    if (bestSize == 3)
+                    if (bestSize == 3)  // part 1 condition
                         best3X = bestX, best3Y = bestY;
                 }
             }
