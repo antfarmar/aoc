@@ -1,5 +1,7 @@
 // Advent of Code 2018
 // Day 11: Chronal Charge
+// https://adventofcode.com/2018/day/11
+
 #include <chrono>
 #include <iostream>
 using namespace std;
@@ -7,11 +9,10 @@ using namespace std;
 // O(n^2) using 2D partial sums in a Summed-Area Table.
 // https://en.wikipedia.org/wiki/Summed-area_table
 void solve() {
-
-    int grid[301][301];                      // the summmed-area table
-    int gridSerial = 9110;                   // given input
-    int bestX, bestY, bestSize, best = -1e9; // memo variables
-    int best3X, best3Y;                      // part 1 answer
+    int grid[301][301];                       // the summmed-area table
+    int gridSerial = 9110;                    // given input
+    int bestX, bestY, bestSize, best = -1e9;  // memo variables
+    int best3X, best3Y;                       // part 1 answer
 
     // Build the 300x300 summed-area table using fuel cell power levels.
     for (int y = 1; y <= 300; y++)
@@ -39,11 +40,11 @@ void solve() {
 
     // What is the X,Y coordinate of the top-left fuel cell of the 3x3 square
     // with the largest total power?
-    cout << "[Part 1]  = " << best3X - 2 << "," << best3Y - 2 << endl; // 21,13
+    cout << "[Part 1]  = " << best3X - 2 << "," << best3Y - 2 << endl;  // 21,13
 
     // What is the X,Y,SIZE of the square with the largest total power?
     cout << "[Part 2]  = " << (bestX - bestSize) + 1 << ","
-         << (bestY - bestSize) + 1 << "," << bestSize << endl; // 235,268,13
+         << (bestY - bestSize) + 1 << "," << bestSize << endl;  // 235,268,13
 }
 
 // Main: Time the solver.
