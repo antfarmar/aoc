@@ -85,8 +85,10 @@ void solve() {
         }
         plants = newPlants;  // copy new generation
 
-        // Part 1: After 20 generations, what is the sum of the numbers of
+        // Part 1
+        // After 20 generations, what is the sum of the numbers of
         // all pots which contain a plant?
+        // Your puzzle answer was 2911
         if (gen == 20)
             gen20Sum = accumulate(plants.begin(), plants.end(), 0);
 
@@ -97,10 +99,12 @@ void solve() {
              << " Delta: " << sum - prevSum << endl;
     }
 
-    // Part 2: After fifty billion (50000000000) generations, what is the
-    // sum of the numbers of all pots which contain a plant?
+    // Part 2
+    // After fifty billion (50'000'000'000) generations, what is the sum of the
+    // numbers of all pots which contain a plant?
+    // Your puzzle answer was 2500000000695
     gen50Sum = accumulate(plants.begin(), plants.end(), 0);
-    gen50Sum += (50000000000 - generations) * (sum - prevSum);
+    gen50Sum += (50'000'000'000 - generations) * (sum - prevSum);
 
     // Output the solutions.
     cout << "[Part 1]  = " << gen20Sum << endl;  // 2911
