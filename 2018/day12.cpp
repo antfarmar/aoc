@@ -2,16 +2,6 @@
 // Day 12: Subterranean Sustainability
 // https://adventofcode.com/2018/day/12
 
-// #include <array>
-// #include <deque>
-// #include <list>
-// #include <map>
-// #include <regex>
-// #include <set>
-// #include <sstream>
-// #include <string>
-// #include <tuple>
-// #include <unordered_map>
 #include <algorithm>
 #include <bitset>
 #include <chrono>
