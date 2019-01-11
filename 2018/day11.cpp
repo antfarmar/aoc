@@ -11,9 +11,10 @@ using namespace std;
 void solve() {
     const int SIZE = 301;
     int grid[SIZE][SIZE];                     // the summmed-area table
-    int gridSerial = 9110;                    // given input
     int bestX, bestY, bestSize, best = -1e9;  // memo variables
     int best3X, best3Y;                       // part 1 answer
+    int gridSerial = 9110;                    // given input
+    cin >> gridSerial;
 
     // Build the 300x300 summed-area table using fuel cell power levels.
     for (int y = 1; y < SIZE; y++)
