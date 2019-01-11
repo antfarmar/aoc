@@ -1,5 +1,7 @@
 // Advent of Code 2018
 // Day 12: Subterranean Sustainability
+// https://adventofcode.com/2018/day/12
+
 // #include <array>
 // #include <deque>
 // #include <list>
@@ -26,8 +28,8 @@ const char potChar = '.';
 const char plantChar = '#';
 
 // Parse the input: Initial plant locations & evolution ruleset.
-void parseInput(unordered_set<int> &plants,
-                unordered_set<unsigned long> &rules) {
+void parseInput(unordered_set<int>& plants,
+                unordered_set<unsigned long>& rules) {
     // Parse the initial plant locations state into a bitset.
     string line;
     getline(cin, line);
@@ -35,16 +37,16 @@ void parseInput(unordered_set<int> &plants,
 
     // Build set of plant locations from initial state.
     for (int loc = 0; loc < initSize; loc++)
-        if (initialState[initSize - loc - 1]) // bitset indices are reversed
+        if (initialState[initSize - loc - 1])  // bitset indices are reversed
             plants.insert(loc);
 
-    getline(cin, line); // skip empty line
+    getline(cin, line);  // skip empty line
 
     // Parse the ruleset. Only keep rules that produce a new plant.
     while (getline(cin, line)) {
         bitset<ruleSize> rule(line.substr(0, ruleSize), 0, ruleSize, potChar,
                               plantChar);
-        if (line[line.length() - 1] == plantChar) // only keep birthing rules
+        if (line[line.length() - 1] == plantChar)  // only keep birthing rules
             rules.insert(rule.to_ulong());
     }
 }
@@ -52,18 +54,17 @@ void parseInput(unordered_set<int> &plants,
 // Cellular automaton of plants.
 void solve() {
     // Set of plant locations and the evolution ruleset.
-    unordered_set<int> plants;          // key is plant location
-    unordered_set<int> newPlants;       // for the next generation
-    unordered_set<unsigned long> rules; // key is rule bitset as an int
+    unordered_set<int> plants;           // key is plant location
+    unordered_set<int> newPlants;        // for the next generation
+    unordered_set<unsigned long> rules;  // key is rule bitset as an int
     parseInput(plants, rules);
 
-    long sum = 0, prevSum;       // for detecting growth stability
-    long gen20Sum, gen50Sum;     // memo part1, part2 answers
-    const int generations = 100; // iteration maximum
+    long sum = 0, prevSum;        // for detecting growth stability
+    long gen20Sum, gen50Sum;      // memo part1, part2 answers
+    const int generations = 100;  // iteration maximum
 
     // Evolve the plant cellular automata.
     for (int gen = 1; gen <= generations; gen++) {
-
         // Find the plant location bounds.
         auto [minLoc, maxLoc] = minmax_element(plants.begin(), plants.end());
 
@@ -74,15 +75,15 @@ void solve() {
         cerr << draw.to_string('-', 'O');
 
         // Apply the evolution rules.
-        newPlants.clear();       // clear previous generation
-        bitset<ruleSize> region; // to inspect plant locations for rule matches
+        newPlants.clear();        // clear previous generation
+        bitset<ruleSize> region;  // to inspect plant locations for rule matches
         for (int loc = *minLoc - ruleSize; loc <= *maxLoc + ruleSize; loc++) {
             region <<= 1;
             region[0] = plants.count(loc);
             if (rules.count(region.to_ulong()))
                 newPlants.insert(loc - (ruleSize / 2));
         }
-        plants = newPlants; // copy new generation
+        plants = newPlants;  // copy new generation
 
         // Part 1: After 20 generations, what is the sum of the numbers of
         // all pots which contain a plant?
@@ -102,8 +103,8 @@ void solve() {
     gen50Sum += (50000000000 - generations) * (sum - prevSum);
 
     // Output the solutions.
-    cout << "[Part 1]  = " << gen20Sum << endl; // 2911
-    cout << "[Part 2]  = " << gen50Sum << endl; // 2500000000695
+    cout << "[Part 1]  = " << gen20Sum << endl;  // 2911
+    cout << "[Part 2]  = " << gen50Sum << endl;  // 2500000000695
 }
 
 // Main: Time the solver.
