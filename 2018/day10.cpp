@@ -29,13 +29,13 @@ struct Star {
     // parse input via >>
     // e.g. position=<-9,  1> velocity=< 0,  2>
     friend std::istream& operator>>(std::istream& is, Star& s) {
-        int ig = 99;
+        int n = 123;
         char c;
-        cin.ignore(ig, '<');
+        cin.ignore(n, '<');
         is >> s.px >> c >> s.py;
-        cin.ignore(ig, '<');
+        cin.ignore(n, '<');
         is >> s.vx >> c >> s.vy;
-        cin.ignore(ig, '\n');
+        cin.ignore(n, '\n');
         return is;
     }
 };
