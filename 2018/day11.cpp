@@ -38,11 +38,16 @@ void solve() {
                 }
             }
 
+    // Part 1
     // What is the X,Y coordinate of the top-left fuel cell of the 3x3 square
     // with the largest total power?
+    // Your puzzle answer was 21,13
     cout << "[Part 1]  = " << best3X - 2 << "," << best3Y - 2 << endl;  // 21,13
 
-    // What is the X,Y,SIZE of the square with the largest total power?
+    // Part 2
+    // What is the X,Y,SIZE identifier of the square with the largest total
+    // power?
+    // Your puzzle answer was 235,268,13
     cout << "[Part 2]  = " << (bestX - bestSize) + 1 << ","
          << (bestY - bestSize) + 1 << "," << bestSize << endl;  // 235,268,13
 }
