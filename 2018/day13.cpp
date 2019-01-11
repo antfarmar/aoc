@@ -2,21 +2,6 @@
 // Day 13: Mine Cart Madness
 // https://adventofcode.com/2018/day/13
 
-// #include <array>
-// #include <bitset>
-// #include <deque>
-// #include <list>
-// #include <map>
-// #include <numeric>
-// #include <regex>
-// #include <set>
-// #include <sstream>
-// #include <string>
-// #include <tuple>
-// #include <istream>
-// #include <iterator>
-// #include <unordered_map>
-// #include <unordered_set>
 #include <algorithm>
 #include <chrono>
 #include <iostream>
