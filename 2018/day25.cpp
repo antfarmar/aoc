@@ -20,7 +20,7 @@ std::istream& operator>>(std::istream& is, Point& p) {
     return is;
 }
 
-// manhattan distance q/w two 4D points
+// manhattan distance b/w two 4D points
 int mhdist(const Point& p, const Point& q) {
     return abs(p.x - q.x) + abs(p.y - q.y) + abs(p.z - q.z) + abs(p.t - q.t);
 }
