@@ -36,13 +36,11 @@ void solve() {
 
     // for each point pair, build an adjacency list of points within dist 3
     for (auto pntA = 0; pntA < pointCount; ++pntA)
-        for (auto pntB = pntA + 1; pntB < pointCount; ++pntB) {
-            int dist = mhdist(points[pntA], points[pntB]);
-            if (dist <= 3) {
+        for (auto pntB = pntA + 1; pntB < pointCount; ++pntB)
+            if (mhdist(points[pntA], points[pntB]) <= 3) {
                 within3[pntA].push_back(pntB);
                 within3[pntB].push_back(pntA);
             }
-        }
 
     // recursive lambda: depth-first search to mark nodes as seen
     std::function<void(int)> visit_dfs = [&](int node) {
