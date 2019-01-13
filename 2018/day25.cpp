@@ -32,7 +32,6 @@ void solve() {
 
     std::vector<std::vector<int>> within3(pointCount);
     std::vector<bool> visited(pointCount);
-    int constellations = 0;
 
     // for each point pair, build an adjacency list of points within dist 3
     for (int p = 0; p < pointCount; ++p)
@@ -49,6 +48,7 @@ void solve() {
     };
 
     // count constellations of points and mark them as counted
+    int constellations = 0;
     for (int point = 0; point < pointCount; ++point)
         if (not visited[point])
             ++constellations, visit_dfs(point);
