@@ -27,7 +27,7 @@ int mhdist(const Point& p, const Point& q) {
 
 // dfs on graph of adjacency lists of points within distance 3 of each other
 void solve() {
-    std::vector<Point> points{std::istream_iterator<Point>{std::cin}, {}};
+    const std::vector<Point> points{std::istream_iterator<Point>{std::cin}, {}};
     const int pointCount = points.size();
 
     std::vector<std::vector<int>> within3(pointCount);
