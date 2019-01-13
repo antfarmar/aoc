@@ -20,9 +20,9 @@ std::istream& operator>>(std::istream& is, Point& p) {
     return is;
 }
 
-// manhattan distance b/w two 4D points
-int mhdist(const Point& a, const Point& b) {
-    return abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z) + abs(a.t - b.t);
+// manhattan distance q/w two 4D points
+int mhdist(const Point& p, const Point& q) {
+    return abs(p.x - q.x) + abs(p.y - q.y) + abs(p.z - q.z) + abs(p.t - q.t);
 }
 
 // dfs on graph of adjacency lists of points within distance 3 of each other
@@ -35,11 +35,11 @@ void solve() {
     int constellations = 0;
 
     // for each point pair, build an adjacency list of points within dist 3
-    for (auto pntA = 0; pntA < pointCount; ++pntA)
-        for (auto pntB = pntA + 1; pntB < pointCount; ++pntB)
-            if (mhdist(points[pntA], points[pntB]) <= 3) {
-                within3[pntA].push_back(pntB);
-                within3[pntB].push_back(pntA);
+    for (int p = 0; p < pointCount; ++p)
+        for (int q = p + 1; q < pointCount; ++q)
+            if (mhdist(points[p], points[q]) <= 3) {
+                within3[p].push_back(q);
+                within3[q].push_back(p);
             }
 
     // recursive lambda: depth-first search to mark nodes as seen
@@ -50,13 +50,10 @@ void solve() {
                 visit_dfs(edge);
     };
 
-    // visit constellations of points and count them
-    for (int point = 0; point < pointCount; point++) {
-        if (not visited[point]) {
-            constellations++;
-            visit_dfs(point);
-        }
-    }
+    // count constellations of points and mark them as counted
+    for (int point = 0; point < pointCount; point++)
+        if (not visited[point])
+            ++constellations, visit_dfs(point);
 
     // Part 1
     // How many constellations are formed by the fixed points in spacetime?
