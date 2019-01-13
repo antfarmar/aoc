@@ -28,7 +28,7 @@ int mhdist(const Point& p, const Point& q) {
 // dfs on graph of adjacency lists of points within distance 3 of each other
 void solve() {
     std::vector<Point> points{std::istream_iterator<Point>{std::cin}, {}};
-    int pointCount = points.size();
+    const int pointCount = points.size();
 
     std::vector<std::vector<int>> within3(pointCount);
     std::vector<bool> visited(pointCount);
@@ -40,9 +40,9 @@ void solve() {
                 within3[p].push_back(q), within3[q].push_back(p);
 
     // recursive lambda: depth-first search to mark nodes as seen
-    std::function<void(int)> visit_dfs = [&](int node) {
+    std::function<void(int)> visit_dfs = [&](const int node) {
         visited[node] = true;
-        for (int edge : within3[node])
+        for (const int edge : within3[node])
             if (not visited[edge])
                 visit_dfs(edge);
     };
