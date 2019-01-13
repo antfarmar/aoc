@@ -51,7 +51,7 @@ void solve() {
     };
 
     // count constellations of points and mark them as counted
-    for (int point = 0; point < pointCount; point++)
+    for (int point = 0; point < pointCount; ++point)
         if (not visited[point])
             ++constellations, visit_dfs(point);
 
