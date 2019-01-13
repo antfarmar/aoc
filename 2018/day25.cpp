@@ -7,7 +7,6 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
-using namespace std;
 
 // a 4D point in spacetime
 struct Point {
@@ -28,11 +27,11 @@ int mhdist(const Point& a, const Point& b) {
 
 // dfs on graph of adjacency lists of points within distance 3 of each other
 void solve() {
-    vector<Point> points{istream_iterator<Point>{cin}, {}};
+    std::vector<Point> points{std::istream_iterator<Point>{std::cin}, {}};
     int pointCount = points.size();
 
-    vector<vector<int>> within3(pointCount);
-    vector<bool> visited(pointCount);
+    std::vector<std::vector<int>> within3(pointCount);
+    std::vector<bool> visited(pointCount);
     int constellations = 0;
 
     // for each point pair, build an adjacency list of points within dist 3
@@ -64,13 +63,13 @@ void solve() {
     // Part 1
     // How many constellations are formed by the fixed points in spacetime?
     // Your puzzle answer was 324
-    cout << "Part 1: " << constellations << endl;
+    std::cout << "Part 1: " << constellations << std::endl;
 }
 
 // Main: Time the solver.
 int main() {
     // Speed up C++ io by unsyncing with C stdio and untie cin/cout.
-    ios_base::sync_with_stdio(false);
+    std::ios_base::sync_with_stdio(false);
     std::cin.tie(0);
     // Time the solve() function in milliseconds.
     auto start_time = std::chrono::high_resolution_clock::now();
