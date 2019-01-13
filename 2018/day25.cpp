@@ -59,17 +59,13 @@ void solve() {
     std::cout << "Part 1: " << constellations << std::endl;
 }
 
-// Main: Time the solver.
+// time the solver
 int main() {
-    // Speed up C++ io by unsyncing with C stdio and untie cin/cout.
-    std::ios_base::sync_with_stdio(false);
+    std::ios_base::sync_with_stdio(0);
     std::cin.tie(0);
-    // Time the solve() function in milliseconds.
-    auto start_time = std::chrono::high_resolution_clock::now();
+    auto start_time = std::chrono::steady_clock::now();
     solve();
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto ms_count = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        end_time - start_time)
-                        .count();
-    std::clog << "[Runtime] = " << ms_count << "ms" << std::endl;
+    auto end_time = std::chrono::steady_clock::now();
+    auto ms = std::chrono::duration<double, std::milli>(end_time - start_time);
+    std::clog << "[Runtime: " << ms.count() << "ms]" << std::endl;
 }
