@@ -40,7 +40,7 @@ void solve() {
                 within3[p].push_back(q), within3[q].push_back(p);
 
     // recursive lambda: depth-first search to mark nodes as seen
-    std::function<void(int)> visit_dfs = [&](const int node) {
+    const std::function<void(int)> visit_dfs = [&](const int node) {
         visited[node] = true;
         for (const int edge : within3[node])
             if (not visited[edge])
