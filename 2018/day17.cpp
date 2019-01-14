@@ -1,5 +1,7 @@
 // Advent of Code 2018
 // Day 17: Reservoir Research
+// https://adventofcode.com/2018/day/17
+
 #include <algorithm>
 #include <chrono>
 #include <climits>
@@ -20,52 +22,52 @@ struct coord {
 
 // Vein: a clay vein on the ground
 struct Vein {
-    int x0, x1, y0, y1; // coords of the vein "line"
+    int x0, x1, y0, y1;  // coords of the vein "line"
 
     // Default constructor: largest bounding box
     Vein() : x0(INT_MAX), x1(INT_MIN), y0(INT_MAX), y1(INT_MIN) {}
 
     // To iteratively compute a bounding box
-    void minmax(const Vein &other) {
-        x0 = min(x0, other.x0 - 1); // margin left
-        x1 = max(x1, other.x1 + 1); // margin right
-        y0 = min(y0, other.y0 - 1); // margin top
-        y1 = max(y1, other.y1);     // just bottom
+    void minmax(const Vein& other) {
+        x0 = min(x0, other.x0 - 1);  // margin left
+        x1 = max(x1, other.x1 + 1);  // margin right
+        y0 = min(y0, other.y0 - 1);  // margin top
+        y1 = max(y1, other.y1);      // just bottom
     }
 
     // Move coords relative to a (0,0) origin
-    void translate(const Vein &bbox) {
+    void translate(const Vein& bbox) {
         x0 -= bbox.x0, x1 -= bbox.x0;
         y0 -= bbox.y0, y1 -= bbox.y0;
     }
 
     // Parse the vein input
-    friend std::istream &operator>>(std::istream &is, Vein &v) {
+    friend std::istream& operator>>(std::istream& is, Vein& v) {
         char c;
         string line;
         getline(cin, line);
         // Construct a vein by parsing raw input string data
         sscanf(line.c_str(), "%c=%d, %*c=%d..%d", &c, &v.x0, &v.y0, &v.y1);
-        v.x1 = v.x0 + 1, v.y1++; // half-open intervals: [x0,x1) [y0,y1)
-        if (c == 'y')            // input varied x or y first
+        v.x1 = v.x0 + 1, v.y1++;  // half-open intervals: [x0,x1) [y0,y1)
+        if (c == 'y')             // input varied x or y first
             swap(v.x0, v.y0), swap(v.x1, v.y1);
         return is;
     }
 };
 
 // Ground grid : 2D-Array of Elements
-enum Element { SAND, CLAY, WATER, FLOW, VOID }; // ground grid tile types
+enum Element { SAND, CLAY, WATER, FLOW, VOID };  // ground grid tile types
 struct Ground {
-    int sizeX, sizeY;             // ground dimensions
-    Vein bbox;                    // bounding box of veins
-    vector<vector<Element>> grid; // 2D array[y][x] of Elements
+    int sizeX, sizeY;              // ground dimensions
+    Vein bbox;                     // bounding box of veins
+    vector<vector<Element>> grid;  // 2D array[y][x] of Elements
 
     // "Constructor"
-    void initialize(Vein &vbox) {
+    void initialize(Vein& vbox) {
         bbox = vbox;
-        sizeX = bbox.x1 - bbox.x0;                        // x=cols
-        sizeY = bbox.y1 - bbox.y0;                        // y=rows
-        grid.resize(sizeY, vector<Element>(sizeX, SAND)); // [y][x]
+        sizeX = bbox.x1 - bbox.x0;                         // x=cols
+        sizeY = bbox.y1 - bbox.y0;                         // y=rows
+        grid.resize(sizeY, vector<Element>(sizeX, SAND));  // [y][x]
     }
 
     // Set ground vein tiles to CLAY type
@@ -91,15 +93,15 @@ struct Ground {
 
     // Getter/Setter alternate: overloaded [] operator
     // const Element &operator[](coord co) const { return grid[co.y][co.x]; }
-    Element OOB = VOID; // out-of-bounds dummy reference
-    Element &operator[](coord co) {
+    Element OOB = VOID;  // out-of-bounds dummy reference
+    Element& operator[](coord co) {
         return inBounds(co) ? grid[co.y][co.x] : OOB;
     }
 
     // Debug draw the entire ground grid
     void draw() const {
-        for (auto &row : grid) {
-            for (auto &e : row)
+        for (auto& row : grid) {
+            for (auto& e : row)
                 cerr << ".#~|"[e];
             cerr << endl;
         }
@@ -108,44 +110,44 @@ struct Ground {
     // Count all the water elements on the ground (parts 1 & 2)
     int countWater() const {
         int cnt = 0;
-        for (auto &row : grid)
+        for (auto& row : grid)
             cnt += count(row.begin(), row.end(), WATER);
         return cnt;
     }
 
     // Count all the flow elements on the ground (part 1)
     int countFlow() const {
-        int cnt = -1; // minus the topmost spring flow
-        for (auto &row : grid)
+        int cnt = -1;  // minus the topmost spring flow
+        for (auto& row : grid)
             cnt += count(row.begin(), row.end(), FLOW);
         return cnt;
     }
 
     // Parse the clay vein data and construct the Ground grid
-    friend std::istream &operator>>(std::istream &is, Ground &G) {
+    friend std::istream& operator>>(std::istream& is, Ground& G) {
         // Parse all the clay vein input data.
         vector<Vein> VeinList{istream_iterator<Vein>{cin}, {}};
 
         // Get bounding box of all veins
         Vein bbox;
-        for (auto &&v : VeinList)
+        for (auto&& v : VeinList)
             bbox.minmax(v);
 
         // Shift all veins to (0,0) array base
-        for (auto &v : VeinList)
+        for (auto& v : VeinList)
             v.translate(bbox);
 
         // Initialize the ground grid
         G.initialize(bbox);
-        for (auto &&v : VeinList)
+        for (auto&& v : VeinList)
             G.addVein(v);
 
         return is;
     }
-}; // end Ground
+};  // end Ground
 
 // Recursively fill ground areas with water
-void fill(Ground &G, coord co, int dir) {
+void fill(Ground& G, coord co, int dir) {
     // if (G.get(co) == FLOW) {
     if (G[co] == FLOW) {
         fill(G, co.dx(dir), dir);
@@ -155,7 +157,7 @@ void fill(Ground &G, coord co, int dir) {
 }
 
 // Recursively flow water down or laterally on the ground
-bool flow(Ground &G, coord co, int dir = 0) { // 0=down
+bool flow(Ground& G, coord co, int dir = 0) {  // 0=down
     // Flowable directions
     int left = -1, down = 0, right = 1;
 
@@ -164,7 +166,7 @@ bool flow(Ground &G, coord co, int dir = 0) { // 0=down
 
     // Check if the current element tile is flowable
     if (e != SAND)
-        return (e != CLAY && e != WATER); // (FLOW || VOID)
+        return (e != CLAY && e != WATER);  // (FLOW || VOID)
 
     // At a flowable tile // G.set(co, FLOW);
     G[co] = FLOW;
@@ -192,12 +194,12 @@ bool flow(Ground &G, coord co, int dir = 0) { // 0=down
 
 // Recursive solution.
 void solve() {
-    Ground G; // the ground grid of veins where the water flow takes place
-    cin >> G; // 2D array[][] grid of tiles of element types
+    Ground G;  // the ground grid of veins where the water flow takes place
+    cin >> G;  // 2D array[][] grid of tiles of element types
 
     // Start the recursive water flow sim, emanating from the (shifted) spring
-    coord spring{500, 0};  // original input water spring coords
-    spring.x -= G.bbox.x0; // shift towards origin in the translated bbox
+    coord spring{500, 0};   // original input water spring coords
+    spring.x -= G.bbox.x0;  // shift towards origin in the translated bbox
     spring.y = max(0, spring.y - G.bbox.y0);
     flow(G, spring);
 
@@ -210,11 +212,11 @@ void solve() {
 
     // Part 1: How many tiles can the water reach within the range of y values
     // in your scan? (ignore tiles with a y coord smaller than the min y coord)
-    cout << "[Part 01] = " << waterCount + flowCount << endl; // 33242
+    cout << "[Part 01] = " << waterCount + flowCount << endl;  // 33242
 
     // Part 2: How many water tiles are left after the water spring stops
     // producing water and all remaining water not at rest has drained?
-    cout << "[Part 02] = " << waterCount << endl; // 27256
+    cout << "[Part 02] = " << waterCount << endl;  // 27256
 }
 
 // Main: Time the solver.

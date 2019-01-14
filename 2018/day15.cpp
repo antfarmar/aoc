@@ -1,5 +1,7 @@
 // Advent of Code 2018
 // Day 15: Beverage Bandits
+// https://adventofcode.com/2018/day/15
+
 #include <algorithm>
 #include <chrono>
 #include <cstring>
@@ -16,24 +18,24 @@ typedef pair<int, int> pii;
 
 // Elves || Goblins
 struct Unit {
-    int x, y;             // location in cave
-    int hp{200};          // hit points
-    int ap{3};            // attack power
-    char type;            // 'E'lf or 'G'oblin
-    bool tookTurn{false}; // flag to indicate the unit moved in a round
+    int x, y;              // location in cave
+    int hp{200};           // hit points
+    int ap{3};             // attack power
+    char type;             // 'E'lf or 'G'oblin
+    bool tookTurn{false};  // flag to indicate the unit moved in a round
 
     // constructor
     Unit(int x, int y, int t) : x(x), y(y), type(t){};
 
     // comparisons in reading order
-    bool operator<(const Unit &other) {
+    bool operator<(const Unit& other) {
         return make_pair(y, x) < make_pair(other.y, other.x);
     }
 };
 
 // GLOBAL CONSTANTS ////////////////////////////////////
-queue<pii> Q;       // queue for bfs
-vector<Unit> units; // the elves/goblins
+queue<pii> Q;        // queue for bfs
+vector<Unit> units;  // the elves/goblins
 
 // The cave map data.
 vector<string> cave{istream_iterator<string>{cin}, {}};
@@ -42,20 +44,20 @@ size_t cols{cave[0].size()};
 
 // Pathfinding data structures.
 const int MAXN{32};
-int DST[MAXN][MAXN];         // distance memos
-bool VST[MAXN][MAXN];        // visited? for bfs
-const int dx[]{0, 1, 0, -1}; // x/col adjacency
-const int dy[]{-1, 0, 1, 0}; // y/row adjacency
+int DST[MAXN][MAXN];          // distance memos
+bool VST[MAXN][MAXN];         // visited? for bfs
+const int dx[]{0, 1, 0, -1};  // x/col adjacency
+const int dy[]{-1, 0, 1, 0};  // y/row adjacency
 ////////////////////////////////////////////////////////
 
 // BFS Path Reconstruction.
-void reconstruct_path(pii cur, pii prev, pii goal, vector<pii> &result) {
+void reconstruct_path(pii cur, pii prev, pii goal, vector<pii>& result) {
     if (cur == goal) {
         result.push_back(prev);
         return;
     }
     int dist = DST[cur.first][cur.second];
-    for (size_t d = 0; d < 4; d++) { // check all adjacent locations
+    for (size_t d = 0; d < 4; d++) {  // check all adjacent locations
         pii ncur = make_pair(cur.first + dy[d], cur.second + dx[d]);
         if (ncur.first >= 0 && ncur.first < int(rows) && ncur.second >= 0 &&
             ncur.second < int(cols) && DST[ncur.first][ncur.second] == dist - 1)
@@ -66,9 +68,9 @@ void reconstruct_path(pii cur, pii prev, pii goal, vector<pii> &result) {
 
 // BFS: Breadth First Search of the open cave locations.
 // Returns a location adjacent to the weakest, nearest enemy (in reading order).
-pii BFS(Unit &unit) {
-    memset(DST, 0x3f3f3f, sizeof(DST)); // prepare for BFS
-    memset(VST, 0, sizeof(VST));        // prepare for BFS
+pii BFS(Unit& unit) {
+    memset(DST, 0x3f3f3f, sizeof(DST));  // prepare for BFS
+    memset(VST, 0, sizeof(VST));         // prepare for BFS
 
     // BFS: Breadth First Search the entire cave, record distances in DST.
     Q.push(make_pair(unit.y, unit.x));
@@ -79,7 +81,7 @@ pii BFS(Unit &unit) {
         if (VST[cur.first][cur.second])
             continue;
         VST[cur.first][cur.second] = true;
-        for (size_t d = 0; d < 4; d++) { // check all adjacent locations
+        for (size_t d = 0; d < 4; d++) {  // check all adjacent locations
             pii ncur = make_pair(cur.first + dy[d], cur.second + dx[d]);
             if (ncur.first >= 0 && ncur.first < int(rows) && ncur.second >= 0 &&
                 ncur.second < int(cols) &&
@@ -94,10 +96,10 @@ pii BFS(Unit &unit) {
     // Find the shortest distance to the next closest enemy (in reading order).
     int minDst = 4 * MAXN;
     pii target = make_pair(MAXN, MAXN);
-    for (Unit &u : units) {
-        if (u.type == unit.type) // skip allies
+    for (Unit& u : units) {
+        if (u.type == unit.type)  // skip allies
             continue;
-        for (size_t d = 0; d < 4; d++) { // check all adjacent locations
+        for (size_t d = 0; d < 4; d++) {  // check all adjacent locations
             pii cur = make_pair(u.y + dy[d], u.x + dx[d]);
             if (cur.first >= 0 && cur.first < int(rows) && cur.second >= 0 &&
                 cur.second < int(cols) && VST[cur.first][cur.second]) {
@@ -105,7 +107,7 @@ pii BFS(Unit &unit) {
                     minDst = DST[cur.first][cur.second];
                     target = cur;
                 } else if (DST[cur.first][cur.second] == minDst && cur < target)
-                    target = cur; // tie, select first in reading order
+                    target = cur;  // tie, select first in reading order
             }
         }
     }
@@ -124,16 +126,16 @@ pii BFS(Unit &unit) {
 }
 
 // Return pointer to weakest,closest adjacent enemy to attack, if it exists.
-Unit *adjEnemy(Unit &unit) {
+Unit* adjEnemy(Unit& unit) {
     int minHP = 201;
-    Unit *target = nullptr;
+    Unit* target = nullptr;
     // For each other Unit...
-    for (Unit &u : units) {
+    for (Unit& u : units) {
         // skip ourself and already dead units.
         if (&u == &unit || u.hp < 0)
             continue;
         // ...find the weakest, closest adjacent enemy in reading order.
-        for (size_t d = 0; d < 4; d++) // check all adjacent locations
+        for (size_t d = 0; d < 4; d++)  // check all adjacent locations
             if (unit.x + dx[d] == u.x && unit.y + dy[d] == u.y &&
                 unit.type != u.type)
                 if (u.hp < minHP || (u.hp == minHP && u < *target))
@@ -145,11 +147,11 @@ Unit *adjEnemy(Unit &unit) {
 // Take Unit U's turn for this round.
 // 1. Try to move into range of an enemy (if it isn't already)
 // 2. Attack the enemy (if it is in range/adjacent).
-void takeTurn(Unit &unit) {
+void takeTurn(Unit& unit) {
     unit.tookTurn = true;
 
     // Are we already adjacent to an enemy to attack?
-    Unit *enemyToAttack = adjEnemy(unit);
+    Unit* enemyToAttack = adjEnemy(unit);
 
     // Nope. We have to find & move towards the closest enemy.
     if (enemyToAttack == nullptr) {
@@ -178,7 +180,7 @@ vector<Unit> parseCaveMap() {
         for (size_t x = 0; x < cols; x++)
             if (cave[y][x] == 'G' || cave[y][x] == 'E') {
                 Unit tmp(x, y, cave[y][x]);
-                units.push_back(tmp); // global scope
+                units.push_back(tmp);  // global scope
             }
     return units;
 }
@@ -186,7 +188,7 @@ vector<Unit> parseCaveMap() {
 // Debug drawing of the entire cave map.
 void drawCave() {
     string draw{string(32, '\n')};
-    for (string &s : cave)
+    for (string& s : cave)
         draw += s + "\n";
     cerr << draw;
     this_thread::sleep_for(100ms);
@@ -194,12 +196,13 @@ void drawCave() {
 
 // Straightforward battle simulations according to the specs.
 void solve() {
-    vector<string> initCave{cave};          // fresh copy of initial cave map
-    vector<Unit> initUnits{parseCaveMap()}; // fresh copy of initial units state
-    bool someElfDied{true};                 // part 2: no elf deaths
-    int elfAP{2};                           // part 2: elf attack power
-    int sumHPatAP3{-1};                     // part 1: solution memo
-    int round;                              // multiplier for solutions
+    vector<string> initCave{cave};  // fresh copy of initial cave map
+    vector<Unit> initUnits{
+        parseCaveMap()};     // fresh copy of initial units state
+    bool someElfDied{true};  // part 2: no elf deaths
+    int elfAP{2};            // part 2: elf attack power
+    int sumHPatAP3{-1};      // part 1: solution memo
+    int round;               // multiplier for solutions
 
     // Simulate entire battles with increasingly stronger elves until none die.
     while (someElfDied) {
@@ -211,18 +214,18 @@ void solve() {
         // cerr << "elfAP:" << elfAP << endl;
 
         // Make the elves STRONGER!
-        for (Unit &u : units)
+        for (Unit& u : units)
             u.ap = (u.type == 'E') ? elfAP : u.ap;
 
         // Simulate a full battle at the current elf attack power.
         bool battleOver = false;
-        round = -1; // number of full rounds that were completed
-                    // (not counting the round in which combat ends)
+        round = -1;  // number of full rounds that were completed
+                     // (not counting the round in which combat ends)
         while (!battleOver) {
-            round++; // new round
+            round++;  // new round
 
             //  No unit moved yet. Reset moved flags.
-            for (Unit &unit : units)
+            for (Unit& unit : units)
                 unit.tookTurn = false;
 
             // Units take turns in reading order. Top->Bot,Lft->Rgt
@@ -231,14 +234,14 @@ void solve() {
         // Goto label: to reset the range-based for loop on surviving units.
         unitsTurnsBegin:
             // Simulate a full battle round. Each unit takes a turn in order.
-            for (Unit &unit : units) {
+            for (Unit& unit : units) {
                 // Skip units that already took a turn this round.
                 if (unit.tookTurn)
                     continue;
 
                 // Are any enemies left to attack/move to?
                 bool enemyLeft = false;
-                for (Unit &u : units)
+                for (Unit& u : units)
                     enemyLeft |= (u.type != unit.type);
 
                 battleOver = (!enemyLeft || (someElfDied && elfAP > 3));
@@ -246,41 +249,42 @@ void solve() {
                     break;
 
                 drawCave();
-                takeTurn(unit); // move and attack if possible
+                takeTurn(unit);  // move and attack if possible
 
                 // Remove dead units from the list & cave. Check if an elf died.
                 vector<Unit> survivors;
-                for (Unit &u : units)
+                for (Unit& u : units)
                     if (u.hp > 0)
                         survivors.push_back(u);
-                    else {                             // unit died
-                        cave[u.y][u.x] = '.';          // remove corpse from map
-                        someElfDied = (u.type == 'E'); // part 2: no elf deaths!
+                    else {                     // unit died
+                        cave[u.y][u.x] = '.';  // remove corpse from map
+                        someElfDied =
+                            (u.type == 'E');  // part 2: no elf deaths!
                     }
 
-                units = survivors;    // copy surviving units
-                goto unitsTurnsBegin; // to reset range-based units iterator
+                units = survivors;     // copy surviving units
+                goto unitsTurnsBegin;  // to reset range-based units iterator
 
-            } // end units turns
+            }  // end units turns
 
-        } // end round
+        }  // end round
 
         // Part 1 answer memo for first battle at elf attack power 3.
         if (elfAP == 3)
             sumHPatAP3 =
                 round * accumulate(units.begin(), units.end(), 0,
-                                   [](int sum, Unit &u) { return sum + u.hp; });
-    } // end battle
+                                   [](int sum, Unit& u) { return sum + u.hp; });
+    }  // end battle
 
     // Part 1: Number of full rounds that were completed multiplied by the sum
     // of the hit points of all remaining units at the moment combat ends.
-    cout << "[Part 01] = " << sumHPatAP3 << endl; // 189910
+    cout << "[Part 01] = " << sumHPatAP3 << endl;  // 189910
 
     // Part 2: Find the outcome of the battle in which the Elves have the lowest
     // attack power (>3) that allows them to win without a single death.
-    cout << "[Part 02] = "; // 57820
+    cout << "[Part 02] = ";  // 57820
     int sumHP = accumulate(units.begin(), units.end(), 0,
-                           [](int sum, Unit &u) { return sum + u.hp; });
+                           [](int sum, Unit& u) { return sum + u.hp; });
     cout << round * sumHP << endl;
 }
 

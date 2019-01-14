@@ -1,16 +1,7 @@
 // Advent of Code 2018
 // Day 24: Immune System Simulator 20XX
-// #include <bits/stdc++.h>
-// #include <array>
-// #include <bitset>
-// #include <cassert>
-// #include <deque>
-// #include <map>
-// #include <sstream>
-// #include <string>
-// #include <tuple>
-// #include <istream>
-// #include <unordered_map>
+// https://adventofcode.com/2018/day/24
+
 #include <algorithm>
 #include <chrono>
 #include <iostream>

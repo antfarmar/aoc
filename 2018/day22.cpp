@@ -1,19 +1,7 @@
 // Advent of Code 2018
 // Day 22: Mode Maze
-// #include <bits/stdc++.h>
-// #include <array>
-// #include <bitset>
-// #include <cassert>
-// #include <deque>
-// #include <list>
-// #include <map>
-// #include <numeric>
-// #include <regex>
-// #include <sstream>
-// #include <string>
-// #include <tuple>
-// #include <unordered_map>
-// #include <unordered_set>
+// https://adventofcode.com/2018/day/22
+
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -29,8 +17,8 @@ using namespace std;
 // Returns the reversed comparison since priority_queue returns the
 // maximal element and Dijkstra uses the minimal
 struct Node {
-    int x, y, tool, cost; // (x,y) coord, tool-type, path-time cost
-    bool operator<(const Node &rhs) const { return cost > rhs.cost; }
+    int x, y, tool, cost;  // (x,y) coord, tool-type, path-time cost
+    bool operator<(const Node& rhs) const { return cost > rhs.cost; }
 };
 
 // Dijkstra's shortest path cost on weighted graph
@@ -48,11 +36,11 @@ void solve() {
     // Input // solution: 6256, 973
     // depth: 5913
     // target: 8,701
-    int depth = 5913; // cave depth (input)
-    int tgtX = 8;     // target location (input)
-    int tgtY = 710;   // target location (input)
-    int maxX = 100;   // cave upper bound
-    int maxY = 1000;  // cave upper bound
+    int depth = 5913;  // cave depth (input)
+    int tgtX = 8;      // target location (input)
+    int tgtY = 710;    // target location (input)
+    int maxX = 100;    // cave upper bound
+    int maxY = 1000;   // cave upper bound
 
     // parse input via sacnf
     // scanf("depth: %d\ntarget:%d,%d", &depth, &tgtX, &tgtY);
@@ -76,7 +64,6 @@ void solve() {
     const int MOD = 20183;
     for (int y = 0; y < maxY; y++)
         for (int x = 0; x < maxX; x++) {
-
             if (y == 0 && x == 0)
                 geology[y][x] = 0;
             else if (y == tgtY && x == tgtX)
@@ -103,7 +90,7 @@ void solve() {
 
     // rocky, wet, narrow = {0,1,2} cave type (erosion mod 3)
     // none, torch, gear  = {0,1,2} tool type not usable in cave type of same #
-    enum { none, torch, gear }; // tool types
+    enum { none, torch, gear };  // tool types
     vector<int> tools{none, torch, gear};
 
     // vector<int> dY{-1, 0, 1, 0}; // up, down
@@ -111,10 +98,10 @@ void solve() {
     vector<pair<int, int>> nsew{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
     // Dijkstra Shortest Path Algorithm (on weighted graph)
-    int fewestMinutes{0};              // part 2 memo (lowest path cost)
-    priority_queue<Node> PQ;           // {x,y,tool,cost}
-    set<tuple<int, int, int>> visited; // {x,y,tool}
-    PQ.push({0, 0, torch, 0});         // start at cave mouth with torch
+    int fewestMinutes{0};               // part 2 memo (lowest path cost)
+    priority_queue<Node> PQ;            // {x,y,tool,cost}
+    set<tuple<int, int, int>> visited;  // {x,y,tool}
+    PQ.push({0, 0, torch, 0});          // start at cave mouth with torch
     while (!PQ.empty()) {
         auto [x, y, tool, cost] = PQ.top();
         PQ.pop();
@@ -133,12 +120,12 @@ void solve() {
 
         // Try each tool type: time cost +7 minutes
         int caveType = erosion[y][x] % 3;
-        for (int const &toolType : tools)
+        for (int const& toolType : tools)
             if (caveType != toolType)
                 PQ.push({x, y, toolType, (cost + 7)});
 
         // Try each direction: time cost +1 minute
-        for (pair<int, int> const &dx_dy : nsew) {
+        for (pair<int, int> const& dx_dy : nsew) {
             auto [dx, dy] = dx_dy;
             dx += x, dy += y;
             int caveType = erosion[dy][dx] % 3;
@@ -150,10 +137,10 @@ void solve() {
 
     // Part 1: What is the total risk level for the smallest rectangle that
     // includes the cave mouth (0,0) and the target's coordinates?
-    cout << "[Part 01] = " << totalRiskLevel << endl; // 6256
+    cout << "[Part 01] = " << totalRiskLevel << endl;  // 6256
 
     // Part 2: What is the fewest # of minutes you can take to reach the target?
-    cout << "[Part 02] = " << fewestMinutes << endl; // 973
+    cout << "[Part 02] = " << fewestMinutes << endl;  // 973
 }
 
 // Main: Time the solver.

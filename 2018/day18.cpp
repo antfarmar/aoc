@@ -1,16 +1,7 @@
 // Advent of Code 2018
 // Day 18: Settlers of The North Pole
-// #include <array>
-// #include <bitset>
-// #include <deque>
-// #include <list>
-// #include <map>
-// #include <numeric>
-// #include <regex>
-// #include <set>
-// #include <sstream>
-// #include <string>
-// #include <tuple>
+// https://adventofcode.com/2018/day/18
+
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -21,12 +12,13 @@
 #include <unordered_set>
 #include <vector>
 using namespace std;
+
 typedef unordered_map<uint16_t, uint8_t> umap;
 
 // Coordinates: helper struct
 struct coord {
-    uint8_t x, y; // coords
-    uint16_t key; // hash key
+    uint8_t x, y;  // coords
+    uint16_t key;  // hash key
 
     // Constructor
     coord(uint8_t x, uint8_t y) : x(x), y(y) { keyify(); };
@@ -41,12 +33,12 @@ struct coord {
 
 // The Lumberyard: Simulates the lumberyard growth patterns
 struct Yard {
-    const uint8_t open = '.'; // cell types
+    const uint8_t open = '.';  // cell types
     const uint8_t tree = '|';
     const uint8_t lumb = '#';
-    umap grid, grid2; // hash map of coords to cell type
-    size_t rows;      // yard size: 50 rows
-    size_t cols;      // yard size: 50 cols
+    umap grid, grid2;  // hash map of coords to cell type
+    size_t rows;       // yard size: 50 rows
+    size_t cols;       // yard size: 50 cols
 
     // Count neighbours of a given grid cell coordinate
     int cntNbor(coord co, uint8_t type) {
@@ -63,7 +55,7 @@ struct Yard {
 
     // Simulates one tick of lumberyard growth
     void simulate() {
-        grid2 = grid; // copy for double-buffering
+        grid2 = grid;  // copy for double-buffering
         for (uint8_t y = 1; y < rows; y++)
             for (uint8_t x = 1; x < cols; x++) {
                 coord cur{x, y};
@@ -78,12 +70,12 @@ struct Yard {
                     if (!(cntNbor(cur, lumb) > 1 && cntNbor(cur, tree) > 0))
                         grid2[cur.key] = open;
             }
-        swap(grid, grid2); // swap to new grid
+        swap(grid, grid2);  // swap to new grid
     }
 
     // Debug draw the lumberyard
     void draw() {
-        string ascii{string(rows, '\n')}; // clear screen
+        string ascii{string(rows, '\n')};  // clear screen
         for (uint8_t y = 1; y < rows; y++) {
             for (uint8_t x = 1; x < cols; x++)
                 ascii += grid[coord{x, y}.key];
@@ -96,12 +88,12 @@ struct Yard {
     // Count all the cells of some type
     int countType(uint8_t type) const {
         return count_if(grid.begin(), grid.end(),
-                        [&](auto &e) { return e.second == type; });
+                        [&](auto& e) { return e.second == type; });
     }
 
     // Parse the lumberyard data
-    friend std::istream &operator>>(std::istream &is, Yard &Y) {
-        uint8_t x = 1, y = 1; // margins @ top & left (prevent negatives)
+    friend std::istream& operator>>(std::istream& is, Yard& Y) {
+        uint8_t x = 1, y = 1;  // margins @ top & left (prevent negatives)
         for (string line; getline(cin, line);) {
             x = 1;
             for (uint8_t c : line)
@@ -113,12 +105,12 @@ struct Yard {
         cerr << "Yard Size: " << Y.rows << "x" << Y.cols << endl;
         return is;
     }
-}; // end Yard
+};  // end Yard
 
 // Cellular automaton simulation.
 void solve() {
-    uint32_t part1{0}, part2{0};     // solution memos
-    uint32_t treeCnt{0}, lumbCnt{0}; // resource counts
+    uint32_t part1{0}, part2{0};      // solution memos
+    uint32_t treeCnt{0}, lumbCnt{0};  // resource counts
 
     // Cycle detection variables
     unordered_map<uint32_t, uint32_t> yardHashCnt;
@@ -138,8 +130,8 @@ void solve() {
         lumbCnt = yard.countType(yard.lumb);
 
         // Use the resource counts as a hash/checksum to detect cycles
-        uint32_t resProd = treeCnt * lumbCnt;     // resources product (hash)
-        uint32_t rptCnt = ++yardHashCnt[resProd]; // how many times it occured
+        uint32_t resProd = treeCnt * lumbCnt;      // resources product (hash)
+        uint32_t rptCnt = ++yardHashCnt[resProd];  // how many times it occured
 
         // Look for repeating resource products after a reasonable threshold cnt
         if (rptCnt >= thresh && !target)
@@ -152,8 +144,8 @@ void solve() {
         if ((target == resProd) && (curTime > cycleStart)) {
             size_t period = (curTime - cycleStart);
             size_t deltaTime = (billion - cycleStart) % period;
-            cycleStart = billion;          // prevent entering this block again
-            billion = curTime + deltaTime; // timestep to stop at (~1000000000)
+            cycleStart = billion;           // prevent entering this block again
+            billion = curTime + deltaTime;  // timestep to stop at (~1000000000)
 
             cerr << "Period: " << period << endl;
             cerr << "Time: " << curTime << endl;
@@ -171,11 +163,11 @@ void solve() {
 
     // Part 1: What will the total resource value of the lumber collection area
     // be after 10 minutes/iterations?
-    cout << "[Part 01] = " << part1 << endl; // 506160
+    cout << "[Part 01] = " << part1 << endl;  // 506160
 
     // Part 2: What will the total resource value of the lumber collection area
     // be after 1,000,000,000 (1 billion) minutes/iterations? 1000000000
-    cout << "[Part 02] = " << part2 << endl; // 189168 // cycle size: 28
+    cout << "[Part 02] = " << part2 << endl;  // 189168 // cycle size: 28
 }
 
 // Main: Time the solver.
