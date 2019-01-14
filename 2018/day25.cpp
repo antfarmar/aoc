@@ -6,23 +6,36 @@
 #include <functional>
 #include <iostream>
 #include <iterator>
+#include <valarray>
 #include <vector>
 
 // a 4D point in spacetime
+// struct Point {
+//     int x, y, z, t;
+// };
 struct Point {
-    int x, y, z, t;
+    std::valarray<int> co;
 };
 
 // parse the points via an istream
 std::istream& operator>>(std::istream& is, Point& p) {
-    char comma;  // x,y,z,t
-    is >> p.x >> comma >> p.y >> comma >> p.z >> comma >> p.t;
+    char comma;
+    // is >> p.x >> comma >> p.y >> comma >> p.z >> comma >> p.t;
+    // p.co.resize(4);  // x,y,z,t
+    // is >> p.co[0] >> comma >> p.co[1] >> comma >> p.co[2] >> comma >>
+    // p.co[3];
+    int x, y, z, t;
+    is >> x >> comma >> y >> comma >> z >> comma >> t;
+    p.co = {x, y, z, t};
     return is;
 }
 
 // manhattan distance b/w two 4D points
+// int mhdist(const Point& p, const Point& q) {
+//     return abs(p.x - q.x) + abs(p.y - q.y) + abs(p.z - q.z) + abs(p.t - q.t);
+// }
 int mhdist(const Point& p, const Point& q) {
-    return abs(p.x - q.x) + abs(p.y - q.y) + abs(p.z - q.z) + abs(p.t - q.t);
+    return (abs(p.co - q.co)).sum();
 }
 
 // dfs on graph of adjacency lists of points within distance 3 of each other
