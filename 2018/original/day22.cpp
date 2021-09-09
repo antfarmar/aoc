@@ -54,7 +54,7 @@ void solve() {
     int maxX = 100;   // cave upper bound
     int maxY = 1000;  // cave upper bound
 
-    // parse input via sacnf
+    // parse input via scanf
     // scanf("depth: %d\ntarget:%d,%d", &depth, &tgtX, &tgtY);
     // depth = 510, tgtX = 10, tgtY = 10; // ans: 114, 45
 
