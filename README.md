@@ -5,4 +5,5 @@ Some C++ solutions
 
 ![Title Screenshot](sshot.png)
 
+![Title Screenshot](sshotx.png)
 
